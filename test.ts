@@ -1,10 +1,23 @@
 import { createWindow, pollEvents } from "./mod.ts";
+import * as Gdi from "https://raw.githubusercontent.com/DjDeveloperr/deno_win32/0.2.0/api/Graphics/Gdi.ts";
+import { Wm } from "./src/platform/win/deps.ts";
 
 const window = createWindow({
   title: "Deno Window Manager",
   width: 800,
   height: 600,
   resizable: true,
+});
+
+const paint = Gdi.allocPAINTSTRUCT();
+
+addEventListener("redrawRequested", (event) => {
+  const hdc = Gdi.BeginPaint(event.window.nativeHandle, paint);
+  const rect = Gdi.allocRECT();
+  Wm.GetClientRect(event.window.nativeHandle, rect);
+  Gdi.FillRect(hdc, rect, Gdi.GetStockObject(Gdi.WHITE_BRUSH));
+  Gdi.TextOutA(hdc, 0, 0, "Hello, Windows!", 15);
+  Gdi.EndPaint(event.window.nativeHandle, paint);
 });
 
 // const window2 = createWindow({

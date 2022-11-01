@@ -6,7 +6,7 @@ import { lpfnWndProc, windows } from "./event.ts";
 if (Deno.build.os === "windows") {
   const cls = Wm.allocWNDCLASSA({
     lpszClassName: "DwmWindow",
-    style: Wm.CS_OWNDC | Wm.CS_DBLCLKS,
+    style: Wm.CS_OWNDC | Wm.CS_DBLCLKS | Wm.CS_HREDRAW | Wm.CS_VREDRAW,
     lpfnWndProc: lpfnWndProc.pointer,
     hCursor: Wm.LoadCursorA(
       null,
