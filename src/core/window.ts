@@ -7,7 +7,7 @@ export interface CreateWindowOptions {
   x?: number;
   y?: number;
   maximized?: boolean;
-  mnimized?: boolean;
+  minimized?: boolean;
   fullScreen?: boolean;
   focused?: boolean;
   alwaysOnTop?: boolean;
@@ -22,10 +22,9 @@ export abstract class DwmWindow {
   abstract position: Position;
   abstract size: Size;
   abstract maximized: boolean;
-  abstract mnimized: boolean;
+  abstract minimized: boolean;
   abstract fullScreen: boolean;
   abstract focused: boolean;
-  abstract alwaysOnTop: boolean;
   abstract visible: boolean;
 
   constructor(_options: CreateWindowOptions) {}

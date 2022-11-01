@@ -1,3 +1,4 @@
+import { Size } from "../../core/common.ts";
 import { CreateWindowOptions, DwmWindow } from "../../core/window.ts";
 import { unwrap, Wm } from "./deps.ts";
 import { lpfnWndProc, windows } from "./event.ts";
@@ -7,11 +8,14 @@ if (Deno.build.os === "windows") {
     lpszClassName: "DwmWindow",
     style: Wm.CS_OWNDC,
     lpfnWndProc: lpfnWndProc.pointer,
+    hCursor: Wm.LoadCursorA(null, "IDC_ARROW"),
   });
   unwrap(Wm.RegisterClassA(cls));
 }
 
 const out = new Uint8Array(256);
+const outRect = Wm.allocRECT();
+const rectI32 = new Int32Array(outRect.buffer);
 
 export class WindowWin32 extends DwmWindow {
   #nativeHandle: Deno.PointerValue;
@@ -22,10 +26,20 @@ export class WindowWin32 extends DwmWindow {
 
   constructor(options: CreateWindowOptions) {
     super(options);
-    let style = Wm.WS_OVERLAPPEDWINDOW;
-    let exStyle = Wm.WS_EX_OVERLAPPEDWINDOW;
+    let style = Wm.WS_CAPTION | Wm.WS_MINIMIZEBOX | Wm.WS_BORDER |
+      Wm.WS_CLIPSIBLINGS | Wm.WS_CLIPCHILDREN | Wm.WS_SYSMENU;
+    let exStyle = Wm.WS_EX_WINDOWEDGE | Wm.WS_EX_ACCEPTFILES;
+    if (options.resizable) {
+      style |= Wm.WS_MAXIMIZEBOX | Wm.WS_SIZEBOX;
+    }
+    if (options.visible !== false) {
+      style |= Wm.WS_VISIBLE;
+    }
     if (options.maximized) {
       style |= Wm.WS_MAXIMIZE;
+    }
+    if (options.minimized) {
+      style |= Wm.WS_MINIMIZE;
     }
     if (options.fullScreen) {
       style |= Wm.WS_POPUP;
@@ -71,17 +85,42 @@ export class WindowWin32 extends DwmWindow {
   }
 
   get size() {
+    Wm.GetWindowRect(this.#nativeHandle, outRect);
     return {
-      width: 0,
-      height: 0,
+      width: rectI32[2] - rectI32[0],
+      height: rectI32[3] - rectI32[1],
     };
+  }
+
+  set size(value: Size) {
+    Wm.SetWindowPos(
+      this.#nativeHandle,
+      null,
+      0,
+      0,
+      value.width,
+      value.height,
+      Wm.SWP_NOZORDER | Wm.SWP_NOMOVE,
+    );
   }
 
   get position() {
     return {
-      x: 0,
-      y: 0,
+      x: rectI32[0],
+      y: rectI32[1],
     };
+  }
+
+  set position(value: { x: number; y: number }) {
+    Wm.SetWindowPos(
+      this.#nativeHandle,
+      null,
+      value.x,
+      value.y,
+      0,
+      0,
+      Wm.SWP_NOZORDER | Wm.SWP_NOSIZE,
+    );
   }
 
   get maximized(): boolean {
@@ -96,11 +135,11 @@ export class WindowWin32 extends DwmWindow {
     }
   }
 
-  get mnimized(): boolean {
+  get minimized(): boolean {
     return Wm.IsIconic(this.#nativeHandle);
   }
 
-  set mnimized(value: boolean) {
+  set minimized(value: boolean) {
     if (value) {
       Wm.ShowWindow(this.#nativeHandle, Wm.SW_MINIMIZE);
     } else {
@@ -114,10 +153,6 @@ export class WindowWin32 extends DwmWindow {
 
   get focused(): boolean {
     return Wm.GetForegroundWindow() === this.#nativeHandle;
-  }
-
-  get alwaysOnTop(): boolean {
-    return false;
   }
 
   get visible(): boolean {

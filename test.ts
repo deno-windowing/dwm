@@ -4,6 +4,7 @@ const window = createWindow({
   title: "Deno Window Manager",
   width: 800,
   height: 600,
+  resizable: true,
 });
 
 // const window2 = createWindow({

@@ -23,7 +23,7 @@ export const lpfnWndProc = new Deno.UnsafeCallback(
               ),
             );
           }
-          return 0;
+          break;
         }
 
         case Wm.WM_CLOSE: {
@@ -33,7 +33,7 @@ export const lpfnWndProc = new Deno.UnsafeCallback(
               win.close();
             }
           }
-          return 0;
+          break;
         }
 
         case Wm.WM_DESTROY:
