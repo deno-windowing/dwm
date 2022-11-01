@@ -19,7 +19,7 @@ const win = createWindow({
   height: 600,
 });
 
-addEventListener("windowClose", (event) => {
+addEventListener("close", (event) => {
   console.log("Window closed:", event.window.title);
 });
 
