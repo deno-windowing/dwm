@@ -1,5 +1,6 @@
 import { Size } from "../../core/common.ts";
 import { CreateWindowOptions, DwmWindow } from "../../core/window.ts";
+import { decodeString } from "../../utils.ts";
 import { unwrap, Wm } from "./deps.ts";
 import { lpfnWndProc, windows } from "./event.ts";
 
@@ -68,12 +69,10 @@ export class WindowWin32 extends DwmWindow {
       null,
       null,
     );
-
     if (hWnd === null) {
       unwrap(false);
     }
     this.#nativeHandle = hWnd!;
-
     if (options.visible !== false) {
       Wm.ShowWindow(this.#nativeHandle, Wm.SW_SHOW);
     }
@@ -83,7 +82,7 @@ export class WindowWin32 extends DwmWindow {
 
   get title(): string {
     const len = Wm.GetWindowTextA(this.#nativeHandle, out, out.length);
-    return new TextDecoder().decode(out.subarray(0, len));
+    return decodeString(out.subarray(0, len));
   }
 
   set title(value: string) {

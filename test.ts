@@ -1,5 +1,5 @@
 import { createWindow, pollEvents } from "./mod.ts";
-import * as Gdi from "https://raw.githubusercontent.com/DjDeveloperr/deno_win32/0.2.0/api/Graphics/Gdi.ts";
+import * as Gdi from "https://raw.githubusercontent.com/DjDeveloperr/deno_win32/main/api/Graphics/Gdi.ts";
 import { Wm } from "./src/platform/win/deps.ts";
 
 const window = createWindow({
@@ -8,6 +8,7 @@ const window = createWindow({
   height: 600,
   resizable: true,
 });
+
 
 const paint = Gdi.allocPAINTSTRUCT();
 
@@ -28,7 +29,6 @@ addEventListener("redrawRequested", (event) => {
 // });
 
 addEventListener("close", (event) => {
-  // event.preventDefault();
   console.log("Closing window", event.window.title);
 });
 
