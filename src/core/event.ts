@@ -38,7 +38,44 @@ export class WindowKeyboardEvent extends Event {
     public repeat: boolean,
     public shiftKey: boolean,
   ) {
-    super(name);
+    super(name, {
+      cancelable: true,
+    });
+  }
+}
+
+export class WindowMouseEvent extends Event {
+  offsetX = 0;
+  offsetY = 0;
+
+  constructor(
+    name: string,
+    public window: DwmWindow,
+    public altKey: boolean,
+    public button: number,
+    public buttons: number,
+    public clientX: number,
+    public clientY: number,
+    public ctrlKey: boolean,
+    public metaKey: boolean,
+    public movementX: number,
+    public movementY: number,
+    public region: number,
+    public screenX: number,
+    public screenY: number,
+    public shiftKey: boolean,
+  ) {
+    super(name, {
+      cancelable: true,
+    });
+  }
+
+  get x() {
+    return this.clientX;
+  }
+
+  get y() {
+    return this.clientY;
   }
 }
 
@@ -49,5 +86,13 @@ declare global {
     redrawRequested: WindowRedrawRequestedEvent;
     keydown: WindowKeyboardEvent;
     keyup: WindowKeyboardEvent;
+    mousedown: WindowMouseEvent;
+    mouseup: WindowMouseEvent;
+    mousemove: WindowMouseEvent;
+    mouseenter: WindowMouseEvent;
+    mouseleave: WindowMouseEvent;
+    click: WindowMouseEvent;
+    dblclick: WindowMouseEvent;
+    contextmenu: WindowMouseEvent;
   }
 }

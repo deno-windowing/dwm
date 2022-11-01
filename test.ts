@@ -19,8 +19,42 @@ addEventListener("close", (event) => {
   console.log("Closing window", event.window.title);
 });
 
-addEventListener("keydown", (event) => {
-  console.log("Keydown", event.key, event.code);
+addEventListener("resize", (event) => {
+  console.log("Window resized", event.width, event.height);
+});
+
+// addEventListener("keydown", (event) => {
+//   console.log("Keydown", event.key, event.code);
+// });
+
+addEventListener("dblclick", (evt) => {
+  console.log("dblclick", evt.button, evt.clientX, evt.clientY);
+});
+
+addEventListener("click", (evt) => {
+  console.log("click", evt.button, evt.clientX, evt.clientY);
+});
+
+addEventListener("contextmenu", (evt) => {
+  console.log("contextmenu", evt.button, evt.clientX, evt.clientY);
+});
+
+// addEventListener("mousemove", (evt) => {
+//   console.log(
+//     "mousemove",
+//     evt.clientX,
+//     evt.clientY,
+//     evt.movementX,
+//     evt.movementY,
+//   );
+// });
+
+addEventListener("mousedown", (evt) => {
+  console.log("mousedown", evt.button, evt.clientX, evt.clientY);
+});
+
+addEventListener("mouseup", (evt) => {
+  console.log("mouseup", evt.button, evt.clientX, evt.clientY);
 });
 
 while (!window.closed) {

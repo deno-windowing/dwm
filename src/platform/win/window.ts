@@ -6,9 +6,12 @@ import { lpfnWndProc, windows } from "./event.ts";
 if (Deno.build.os === "windows") {
   const cls = Wm.allocWNDCLASSA({
     lpszClassName: "DwmWindow",
-    style: Wm.CS_OWNDC,
+    style: Wm.CS_OWNDC | Wm.CS_DBLCLKS,
     lpfnWndProc: lpfnWndProc.pointer,
-    hCursor: Wm.LoadCursorA(null, "IDC_ARROW"),
+    hCursor: Wm.LoadCursorA(
+      null,
+      new Uint8Array(Deno.UnsafePointerView.getArrayBuffer(32512, 0)),
+    ),
   });
   unwrap(Wm.RegisterClassA(cls));
 }
@@ -19,6 +22,9 @@ const rectI32 = new Int32Array(outRect.buffer);
 
 export class WindowWin32 extends DwmWindow {
   #nativeHandle: Deno.PointerValue;
+
+  // deno-lint-ignore no-explicit-any
+  _inputState: any = {};
 
   get nativeHandle() {
     return this.#nativeHandle;

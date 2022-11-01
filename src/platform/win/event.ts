@@ -1,6 +1,7 @@
 import {
   WindowCloseEvent,
   WindowKeyboardEvent,
+  WindowMouseEvent,
   WindowRedrawRequestedEvent,
   WindowResizeEvent,
 } from "../../core/mod.ts";
@@ -43,6 +44,75 @@ function processKeyEvent(
       false,
     ),
   );
+}
+
+function processMouseEvent(
+  name: string,
+  btn: number,
+  hWnd: Deno.PointerValue,
+  wParam: Deno.PointerValue,
+  lParam: Deno.PointerValue,
+) {
+  const win = windows.get(hWnd);
+  if (win) {
+    if (name === "mousedown") {
+      win._inputState[`mousedown_${btn}`] = true;
+    }
+    const x = Number(lParam) & 0xffff,
+      y = Number(lParam) >> 16;
+    let movementX = 0, movementY = 0;
+    if (name === "mousemove") {
+      const prevX = win._inputState.mouseX;
+      const prevY = win._inputState.mouseY;
+      movementX = x - prevX;
+      movementY = y - prevY;
+      win._inputState.mouseX = x;
+      win._inputState.mouseY = y;
+    }
+    dispatchEvent(
+      new WindowMouseEvent(
+        name,
+        win,
+        false,
+        btn,
+        btn,
+        x,
+        y,
+        (Number(wParam) & 0x0008) === 0x0008,
+        false,
+        movementX,
+        movementY,
+        0,
+        x,
+        y,
+        (Number(wParam) & 0x0004) === 0x0004,
+      ),
+    );
+    if (name === "mouseup") {
+      if (win._inputState[`mousedown_${btn}`]) {
+        dispatchEvent(
+          new WindowMouseEvent(
+            btn === 0 ? "click" : "contextmenu",
+            win,
+            false,
+            btn,
+            btn,
+            Number(lParam) & 0xffff,
+            Number(lParam) >> 16,
+            (Number(wParam) & 0x0008) === 0x0008,
+            false,
+            0,
+            0,
+            0,
+            Number(lParam) & 0xffff,
+            Number(lParam) >> 16,
+            (Number(wParam) & 0x0004) === 0x0004,
+          ),
+        );
+        delete win._inputState[`mousedown_${btn}`];
+      }
+    }
+  }
 }
 
 export const lpfnWndProc = new Deno.UnsafeCallback(
@@ -134,6 +204,56 @@ export const lpfnWndProc = new Deno.UnsafeCallback(
               Number(lParam),
             );
           }
+          return 0;
+        }
+
+        case Wm.WM_LBUTTONDBLCLK: {
+          processMouseEvent("dblclick", 0, hwnd, wParam, lParam);
+          return 0;
+        }
+
+        case Wm.WM_MBUTTONDBLCLK: {
+          processMouseEvent("dblclick", 1, hwnd, wParam, lParam);
+          return 0;
+        }
+
+        case Wm.WM_RBUTTONDBLCLK: {
+          processMouseEvent("dblclick", 2, hwnd, wParam, lParam);
+          return 0;
+        }
+
+        case Wm.WM_LBUTTONUP: {
+          processMouseEvent("mouseup", 0, hwnd, wParam, lParam);
+          return 0;
+        }
+
+        case Wm.WM_MBUTTONUP: {
+          processMouseEvent("mouseup", 1, hwnd, wParam, lParam);
+          return 0;
+        }
+
+        case Wm.WM_RBUTTONUP: {
+          processMouseEvent("mouseup", 2, hwnd, wParam, lParam);
+          return 0;
+        }
+
+        case Wm.WM_LBUTTONDOWN: {
+          processMouseEvent("mousedown", 0, hwnd, wParam, lParam);
+          return 0;
+        }
+
+        case Wm.WM_MBUTTONDOWN: {
+          processMouseEvent("mousedown", 1, hwnd, wParam, lParam);
+          return 0;
+        }
+
+        case Wm.WM_RBUTTONDOWN: {
+          processMouseEvent("mousedown", 2, hwnd, wParam, lParam);
+          return 0;
+        }
+
+        case Wm.WM_MOUSEMOVE: {
+          processMouseEvent("mousemove", 0, hwnd, wParam, lParam);
           return 0;
         }
 
