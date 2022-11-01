@@ -14,9 +14,13 @@ const window = createWindow({
 //   parent: window,
 // });
 
-addEventListener("windowClose", (event) => {
+addEventListener("close", (event) => {
   // event.preventDefault();
   console.log("Closing window", event.window.title);
+});
+
+addEventListener("keydown", (event) => {
+  console.log("Keydown", event.key, event.code);
 });
 
 while (!window.closed) {

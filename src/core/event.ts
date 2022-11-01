@@ -2,7 +2,7 @@ import { DwmWindow } from "./window.ts";
 
 export class WindowCloseEvent extends Event {
   constructor(public window: DwmWindow) {
-    super("windowClose", {
+    super("close", {
       cancelable: true,
     });
   }
@@ -14,13 +14,13 @@ export class WindowResizeEvent extends Event {
     public width: number,
     public height: number,
   ) {
-    super("windowResize");
+    super("resize");
   }
 }
 
 export class WindowRedrawRequestedEvent extends Event {
   constructor(public window: DwmWindow) {
-    super("windowRedrawRequested");
+    super("redrawRequested");
   }
 }
 
@@ -44,10 +44,10 @@ export class WindowKeyboardEvent extends Event {
 
 declare global {
   interface WindowEventMap {
-    windowClose: WindowCloseEvent;
-    windowResize: WindowResizeEvent;
-    windowRedrawRequested: WindowRedrawRequestedEvent;
-    windowKeyDown: WindowKeyboardEvent;
-    windowKeyUp: WindowKeyboardEvent;
+    close: WindowCloseEvent;
+    resize: WindowResizeEvent;
+    redrawRequested: WindowRedrawRequestedEvent;
+    keydown: WindowKeyboardEvent;
+    keyup: WindowKeyboardEvent;
   }
 }

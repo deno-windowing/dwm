@@ -6,12 +6,10 @@ import {
 } from "../../core/mod.ts";
 import { Wm } from "./deps.ts";
 import { WindowWin32 } from "./window.ts";
+import SCANCODES from "./scancode.json" assert { type: "json" };
+import VKEYS from "./virtual_key.json" assert { type: "json" };
 
 export const windows = new Map<Deno.PointerValue, WindowWin32>();
-
-function vkeyToKey(vkey: number, extended: boolean) {
-  return "Unidentified";
-}
 
 function processKeyEvent(
   name: string,
@@ -20,21 +18,25 @@ function processKeyEvent(
   flags: number,
 ) {
   const repeatCount = flags & 0xffff;
-  // const scanCode = (flags >> 16) & 0xff;
+  const scanCode = (flags >> 16) & 0xff;
   // const extended = (flags >> 24) & 1;
   const altDown = (flags >> 29) & 1;
   // const prevDown = (flags >> 30) & 1;
   // const transition = (flags >> 31) & 1;
+
+  const vk = ((vkey >= 65 && vkey <= 90) || (vkey >= 48 && vkey <= 57))
+    ? String.fromCharCode(vkey)
+    : (VKEYS as Record<number, string>)[vkey] ?? vkey.toString();
 
   return dispatchEvent(
     new WindowKeyboardEvent(
       name,
       win,
       altDown === 1,
-      "",
+      (SCANCODES as Record<number, string>)[scanCode],
       false,
       false,
-      "",
+      vk,
       0,
       false,
       repeatCount > 1,
@@ -86,35 +88,53 @@ export const lpfnWndProc = new Deno.UnsafeCallback(
         case Wm.WM_KEYDOWN: {
           const win = windows.get(hwnd);
           if (win) {
-            if (
-              !processKeyEvent(
-                "windowKeyDown",
-                win,
-                Number(wParam),
-                Number(lParam),
-              )
-            ) {
-              return 0;
-            }
+            processKeyEvent(
+              "keydown",
+              win,
+              Number(wParam),
+              Number(lParam),
+            );
           }
-          break;
+          return 0;
+        }
+
+        case Wm.WM_SYSKEYDOWN: {
+          const win = windows.get(hwnd);
+          if (win) {
+            processKeyEvent(
+              "keydown",
+              win,
+              Number(wParam),
+              Number(lParam),
+            );
+          }
+          return 0;
         }
 
         case Wm.WM_KEYUP: {
           const win = windows.get(hwnd);
           if (win) {
-            if (
-              !processKeyEvent(
-                "windowKeyUp",
-                win,
-                Number(wParam),
-                Number(lParam),
-              )
-            ) {
-              return 0;
-            }
+            processKeyEvent(
+              "keyup",
+              win,
+              Number(wParam),
+              Number(lParam),
+            );
           }
-          break;
+          return 0;
+        }
+
+        case Wm.WM_SYSKEYUP: {
+          const win = windows.get(hwnd);
+          if (win) {
+            processKeyEvent(
+              "keyup",
+              win,
+              Number(wParam),
+              Number(lParam),
+            );
+          }
+          return 0;
         }
 
         case Wm.WM_DESTROY:
