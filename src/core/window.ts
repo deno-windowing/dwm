@@ -12,6 +12,7 @@ export interface CreateWindowOptions {
   focused?: boolean;
   alwaysOnTop?: boolean;
   visible?: boolean;
+  resizable?: boolean;
   parent?: DwmWindow;
 }
 
