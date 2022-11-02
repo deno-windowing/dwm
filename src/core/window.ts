@@ -14,9 +14,15 @@ export interface CreateWindowOptions {
   visible?: boolean;
   resizable?: boolean;
   parent?: DwmWindow;
+  scrollBar?: boolean | "horizontal" | "vertical";
+  disabled?: boolean;
+  acceptFiles?: boolean;
+  toolbar?: boolean;
+  pallette?: boolean;
 }
 
 export abstract class DwmWindow {
+  id = crypto.randomUUID();
   abstract readonly nativeHandle: Deno.PointerValue;
 
   abstract title: string;

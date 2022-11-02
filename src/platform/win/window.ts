@@ -23,7 +23,7 @@ const rectI32 = new Int32Array(outRect.buffer);
 
 export class WindowWin32 extends DwmWindow {
   #nativeHandle: Deno.PointerValue;
-
+  #closed = false;
   // deno-lint-ignore no-explicit-any
   _inputState: any = {};
 
@@ -48,12 +48,29 @@ export class WindowWin32 extends DwmWindow {
     if (options.minimized) {
       style |= Wm.WS_MINIMIZE;
     }
+    if (options.scrollBar) {
+      style |= options.scrollBar == "horizontal"
+        ? Wm.WS_HSCROLL
+        : Wm.WS_VSCROLL;
+    }
+    if (options.disabled) {
+      style |= Wm.WS_DISABLED;
+    }
     if (options.fullScreen) {
       style |= Wm.WS_POPUP;
       exStyle |= Wm.WS_EX_TOPMOST;
     }
     if (options.alwaysOnTop) {
       exStyle |= Wm.WS_EX_TOPMOST;
+    }
+    if (options.acceptFiles) {
+      exStyle |= Wm.WS_EX_ACCEPTFILES;
+    }
+    if (options.toolbar) {
+      exStyle |= Wm.WS_EX_TOOLWINDOW;
+    }
+    if (options.pallette) {
+      exStyle |= Wm.WS_EX_PALETTEWINDOW;
     }
     const hWnd = Wm.CreateWindowExA(
       exStyle,
@@ -78,6 +95,11 @@ export class WindowWin32 extends DwmWindow {
     }
 
     windows.set(this.#nativeHandle, this);
+  }
+
+  close(): void {
+    unwrap(Wm.DestroyWindow(this.#nativeHandle));
+    this.#closed = true;
   }
 
   get title(): string {
@@ -133,11 +155,7 @@ export class WindowWin32 extends DwmWindow {
   }
 
   set maximized(value: boolean) {
-    if (value) {
-      Wm.ShowWindow(this.#nativeHandle, Wm.SW_MAXIMIZE);
-    } else {
-      Wm.ShowWindow(this.#nativeHandle, Wm.SW_RESTORE);
-    }
+    Wm.ShowWindow(this.#nativeHandle, value ? Wm.SW_MAXIMIZE : Wm.SW_RESTORE);
   }
 
   get minimized(): boolean {
@@ -145,11 +163,7 @@ export class WindowWin32 extends DwmWindow {
   }
 
   set minimized(value: boolean) {
-    if (value) {
-      Wm.ShowWindow(this.#nativeHandle, Wm.SW_MINIMIZE);
-    } else {
-      Wm.ShowWindow(this.#nativeHandle, Wm.SW_RESTORE);
-    }
+    Wm.ShowWindow(this.#nativeHandle, value ? Wm.SW_MINIMIZE : Wm.SW_RESTORE);
   }
 
   get fullScreen(): boolean {
@@ -165,18 +179,11 @@ export class WindowWin32 extends DwmWindow {
   }
 
   set visible(value: boolean) {
-    if (value) {
-      Wm.ShowWindow(this.#nativeHandle, Wm.SW_SHOW);
-    } else {
-      Wm.ShowWindow(this.#nativeHandle, Wm.SW_HIDE);
-    }
+    Wm.ShowWindow(this.#nativeHandle, value ? Wm.SW_SHOW : Wm.SW_HIDE);
   }
 
-  #closed = false;
-
-  close(): void {
-    unwrap(Wm.DestroyWindow(this.#nativeHandle));
-    this.#closed = true;
+  get parent() {
+    return Wm.GetParent(this.#nativeHandle);
   }
 
   get closed(): boolean {
