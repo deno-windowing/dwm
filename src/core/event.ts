@@ -1,5 +1,8 @@
 import { DwmWindow } from "./window.ts";
 
+/**
+ * Event triggered when a window is closed
+ */
 export class WindowCloseEvent extends Event {
   constructor(public window: DwmWindow) {
     super("close", {
@@ -8,6 +11,9 @@ export class WindowCloseEvent extends Event {
   }
 }
 
+/**
+ * Event triggered when a window is resized
+ */
 export class WindowResizeEvent extends Event {
   constructor(
     public window: DwmWindow,
@@ -18,12 +24,18 @@ export class WindowResizeEvent extends Event {
   }
 }
 
+/**
+ * Event triggered when a window requests a redraw event
+ */
 export class WindowRedrawRequestedEvent extends Event {
   constructor(public window: DwmWindow) {
     super("redrawRequested");
   }
 }
 
+/**
+ * Event triggered when a Key state is changed
+ */
 export class WindowKeyboardEvent extends Event {
   constructor(
     name: string,
@@ -44,6 +56,9 @@ export class WindowKeyboardEvent extends Event {
   }
 }
 
+/**
+ * Event is triggered when mouse state changes
+ */
 export class WindowMouseEvent extends Event {
   offsetX = 0;
   offsetY = 0;
