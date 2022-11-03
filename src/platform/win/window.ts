@@ -69,7 +69,7 @@ export class WindowWin32 extends DwmWindow {
     if (options.toolbar) {
       exStyle |= Wm.WS_EX_TOOLWINDOW;
     }
-    if (options.pallette) {
+    if (options.palette) {
       exStyle |= Wm.WS_EX_PALETTEWINDOW;
     }
     const hWnd = Wm.CreateWindowExA(
