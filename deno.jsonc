@@ -1,5 +1,8 @@
 {
   "tasks": {
-    "test": "deno run -A --unstable test.ts"
+    "test": "deno run -A --unstable test.ts",
+    "example_opengl": "deno run -A --unstable examples/opengl.ts",
+    "example_child_window": "deno run -A --unstable examples/child-window.ts",
+    "example": "deno run -A --unstable examples/window.ts"
   }
 }

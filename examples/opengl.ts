@@ -45,7 +45,7 @@ const window = createWindow({
   width: 800,
   height: 600,
   resizable: true,
-  pallette: true,
+  palette: true,
 });
 
 createOpenGL(window);
