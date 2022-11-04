@@ -33,9 +33,12 @@ export class WindowWin32 extends DwmWindow {
 
   constructor(options: CreateWindowOptions) {
     super(options);
-    let style = Wm.WS_CAPTION | Wm.WS_MINIMIZEBOX | Wm.WS_BORDER |
-      Wm.WS_CLIPSIBLINGS | Wm.WS_CLIPCHILDREN | Wm.WS_SYSMENU;
+    let style = Wm.WS_CAPTION | Wm.WS_MINIMIZEBOX |
+      Wm.WS_CLIPSIBLINGS | Wm.WS_CLIPCHILDREN;
     let exStyle = Wm.WS_EX_WINDOWEDGE | Wm.WS_EX_ACCEPTFILES;
+    if (!options.removeSystemMenu) {
+      style |= Wm.WS_BORDER | Wm.WS_SYSMENU;
+    }
     if (options.resizable) {
       style |= Wm.WS_MAXIMIZEBOX | Wm.WS_SIZEBOX;
     }

@@ -90,6 +90,11 @@ export interface CreateWindowOptions {
    * Whether the window is palette
    */
   palette?: boolean;
+  
+  /**
+   * whether to remove the system menu
+   */
+  removeSystemMenu?: boolean;
 }
 
 /**
