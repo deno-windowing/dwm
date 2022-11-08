@@ -1,7 +1,10 @@
 import { createWindow, DwmWindow, pollEvents } from "../mod.ts";
 import * as Gdi from "https://raw.githubusercontent.com/DjDeveloperr/deno_win32/main/api/Graphics/Gdi.ts";
 import * as GL from "https://raw.githubusercontent.com/DjDeveloperr/deno_win32/main/api/Graphics/OpenGL.ts";
-import { blur, extendClient } from "https://raw.githubusercontent.com/deno-windowing/flint/main/mod.ts"
+import {
+  blur,
+  extendClient,
+} from "https://raw.githubusercontent.com/deno-windowing/flint/main/mod.ts";
 
 const paint = Gdi.allocPAINTSTRUCT();
 

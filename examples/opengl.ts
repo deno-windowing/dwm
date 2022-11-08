@@ -35,7 +35,7 @@ addEventListener("redrawRequested", (event) => {
 });
 
 addEventListener("resize", (event) => {
-  GL.glViewport(0, 0, event.width & 0xffff, event.height >> 16);
+  GL.glViewport(0, 0, event.width, event.height);
   Gdi.BeginPaint(event.window.nativeHandle, paint);
   Gdi.EndPaint(event.window.nativeHandle, paint);
 });
@@ -45,7 +45,7 @@ const window = createWindow({
   width: 800,
   height: 600,
   resizable: true,
-  palette: true,
+  // palette: true,
 });
 
 createOpenGL(window);

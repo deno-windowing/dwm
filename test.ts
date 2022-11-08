@@ -9,7 +9,6 @@ const window = createWindow({
   resizable: true,
 });
 
-
 const paint = Gdi.allocPAINTSTRUCT();
 
 addEventListener("redrawRequested", (event) => {
