@@ -90,7 +90,7 @@ export interface CreateWindowOptions {
    * Whether the window is palette
    */
   palette?: boolean;
-  
+
   /**
    * whether to remove the system menu
    */
@@ -157,6 +157,11 @@ export abstract class DwmWindow {
    * Close the window
    */
   abstract close(): void;
+
+  /**
+   * Requests a redraw
+   */
+  abstract requestRedraw(): void;
 
   /**
    * Check if the window is closed

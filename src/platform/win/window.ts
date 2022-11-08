@@ -1,7 +1,7 @@
 import { Size } from "../../core/common.ts";
 import { CreateWindowOptions, DwmWindow } from "../../core/window.ts";
 import { decodeString } from "../../utils.ts";
-import { unwrap, Wm } from "./deps.ts";
+import { Gdi, unwrap, Wm } from "./deps.ts";
 import { lpfnWndProc, windows } from "./event.ts";
 
 if (Deno.build.os === "windows") {
@@ -98,6 +98,10 @@ export class WindowWin32 extends DwmWindow {
     }
 
     windows.set(this.#nativeHandle, this);
+  }
+
+  requestRedraw() {
+    Gdi.RedrawWindow(this.#nativeHandle, null, 0, Gdi.RDW_INTERNALPAINT);
   }
 
   close(): void {
