@@ -1,4 +1,5 @@
 import { Size } from "../../core/common.ts";
+import { EventLoop } from "../../core/event.ts";
 import { CreateWindowOptions, DwmWindow } from "../../core/window.ts";
 import { decodeString } from "../../utils.ts";
 import { Gdi, unwrap, Wm } from "./deps.ts";
@@ -21,9 +22,12 @@ const out = new Uint8Array(256);
 const outRect = Wm.allocRECT();
 const rectI32 = new Int32Array(outRect.buffer);
 
+let windowCount = -1;
+
 export class WindowWin32 extends DwmWindow {
   #nativeHandle: Deno.PointerValue;
   #closed = false;
+  #counted = false;
   // deno-lint-ignore no-explicit-any
   _inputState: any = {};
 
@@ -96,8 +100,12 @@ export class WindowWin32 extends DwmWindow {
     if (options.visible !== false) {
       Wm.ShowWindow(this.#nativeHandle, Wm.SW_SHOW);
     }
-
     windows.set(this.#nativeHandle, this);
+    if (options.autoExitEventLoop !== false && !options.parent) {
+      if (windowCount > -1) windowCount++;
+      else windowCount = 1;
+      this.#counted = true;
+    }
   }
 
   requestRedraw() {
@@ -107,6 +115,12 @@ export class WindowWin32 extends DwmWindow {
   close(): void {
     unwrap(Wm.DestroyWindow(this.#nativeHandle));
     this.#closed = true;
+    if (this.#counted) {
+      windowCount--;
+      if (windowCount === 0) {
+        EventLoop.exit();
+      }
+    }
   }
 
   get title(): string {

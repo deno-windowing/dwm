@@ -1,4 +1,6 @@
 import {
+  animationFrames,
+  EventLoop,
   WindowCloseEvent,
   WindowKeyboardEvent,
   WindowMouseEvent,
@@ -11,20 +13,6 @@ import SCANCODES from "./scancode.json" assert { type: "json" };
 import VKEYS from "./virtual_key.json" assert { type: "json" };
 
 export const windows = new Map<Deno.PointerValue, WindowWin32>();
-
-export type AnimationFrameCallback = (time: number) => void;
-const animationFrames = new Map<number, AnimationFrameCallback>();
-let animationFrameId = 0;
-
-export function requestAnimationFrame(callback: AnimationFrameCallback) {
-  animationFrameId++;
-  animationFrames.set(animationFrameId, callback);
-  return animationFrameId;
-}
-
-export function cancelAnimationFrame(id: number) {
-  animationFrames.delete(id);
-}
 
 function processKeyEvent(
   name: string,
@@ -139,7 +127,9 @@ export const lpfnWndProc = new Deno.UnsafeCallback(
       switch (msg) {
         case Wm.WM_PAINT: {
           const now = performance.now();
-          for (const frame of animationFrames.values()) {
+          const frames = [...animationFrames.values()];
+          animationFrames.clear();
+          for (const frame of frames) {
             frame(now);
           }
           const window = windows.get(hwnd);
@@ -295,14 +285,12 @@ export function pollEvents() {
   }
 }
 
-Object.assign(window, {
-  requestAnimationFrame,
-  cancelAnimationFrame,
-});
-
-declare global {
-  interface Window {
-    requestAnimationFrame: typeof requestAnimationFrame;
-    cancelAnimationFrame: typeof cancelAnimationFrame;
+function step() {
+  if (!EventLoop.running) {
+    return;
   }
+  pollEvents();
+  setTimeout(step, 0);
 }
+
+setTimeout(step, 0);

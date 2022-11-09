@@ -1,12 +1,12 @@
-import { createWindow, pollEvents } from "../mod.ts";
+import { createWindow } from "../mod.ts";
 
-const window = createWindow({
+createWindow({
   title: "Deno Window Manager",
   width: 800,
   height: 600,
   resizable: true,
 });
 
-while (!window.closed) {
-  pollEvents();
-}
+addEventListener("resize", (event) => {
+  console.log("Window resized", event.width, event.height);
+});

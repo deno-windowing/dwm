@@ -1,4 +1,4 @@
-import { createWindow, pollEvents } from "../mod.ts";
+import { createWindow } from "../mod.ts";
 import * as Gdi from "https://raw.githubusercontent.com/DjDeveloperr/deno_win32/main/api/Graphics/Gdi.ts";
 import { Wm } from "../src/platform/win/deps.ts";
 
@@ -57,7 +57,3 @@ addEventListener("mousedown", (evt) => {
 addEventListener("mouseup", (evt) => {
   console.log("mouseup", evt.button, evt.clientX, evt.clientY);
 });
-
-while (!window.closed) {
-  pollEvents();
-}

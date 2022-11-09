@@ -1,9 +1,25 @@
 import { DwmWindow } from "./window.ts";
 
+export class EventLoop {
+  static running = true;
+
+  static exit() {
+    if (EventLoop.running) {
+      EventLoop.running = false;
+      dispatchEvent(new Event("unload"));
+      Deno.exit(0);
+    }
+  }
+}
+
+export class WindowEvent extends Event {
+  loop = EventLoop;
+}
+
 /**
  * Event triggered when a window is closed
  */
-export class WindowCloseEvent extends Event {
+export class WindowCloseEvent extends WindowEvent {
   constructor(public window: DwmWindow) {
     super("close", {
       cancelable: true,
@@ -14,7 +30,7 @@ export class WindowCloseEvent extends Event {
 /**
  * Event triggered when a window is resized
  */
-export class WindowResizeEvent extends Event {
+export class WindowResizeEvent extends WindowEvent {
   constructor(
     public window: DwmWindow,
     public width: number,
@@ -27,7 +43,7 @@ export class WindowResizeEvent extends Event {
 /**
  * Event triggered when a window requests a redraw event
  */
-export class WindowRedrawRequestedEvent extends Event {
+export class WindowRedrawRequestedEvent extends WindowEvent {
   constructor(public window: DwmWindow) {
     super("redrawRequested");
   }
@@ -36,7 +52,7 @@ export class WindowRedrawRequestedEvent extends Event {
 /**
  * Event triggered when a Key state is changed
  */
-export class WindowKeyboardEvent extends Event {
+export class WindowKeyboardEvent extends WindowEvent {
   constructor(
     name: string,
     public window: DwmWindow,
@@ -59,7 +75,7 @@ export class WindowKeyboardEvent extends Event {
 /**
  * Event is triggered when mouse state changes
  */
-export class WindowMouseEvent extends Event {
+export class WindowMouseEvent extends WindowEvent {
   offsetX = 0;
   offsetY = 0;
 
@@ -94,7 +110,29 @@ export class WindowMouseEvent extends Event {
   }
 }
 
+export type AnimationFrameCallback = (time: number) => void;
+export const animationFrames = new Map<number, AnimationFrameCallback>();
+let animationFrameId = 0;
+
+export function requestAnimationFrameImpl(callback: AnimationFrameCallback) {
+  animationFrameId++;
+  animationFrames.set(animationFrameId, callback);
+  return animationFrameId;
+}
+
+export function cancelAnimationFrameImpl(id: number) {
+  animationFrames.delete(id);
+}
+
+Object.assign(window, {
+  requestAnimationFrame: requestAnimationFrameImpl,
+  cancelAnimationFrame: cancelAnimationFrameImpl,
+});
+
 declare global {
+  const requestAnimationFrame: typeof requestAnimationFrameImpl;
+  const cancelAnimationFrame: typeof cancelAnimationFrameImpl;
+
   interface WindowEventMap {
     close: WindowCloseEvent;
     resize: WindowResizeEvent;

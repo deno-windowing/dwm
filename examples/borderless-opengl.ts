@@ -1,4 +1,4 @@
-import { createWindow, DwmWindow, pollEvents } from "../mod.ts";
+import { createWindow, DwmWindow } from "../mod.ts";
 import * as Gdi from "https://raw.githubusercontent.com/DjDeveloperr/deno_win32/main/api/Graphics/Gdi.ts";
 import * as GL from "https://raw.githubusercontent.com/DjDeveloperr/deno_win32/main/api/Graphics/OpenGL.ts";
 import {
@@ -36,12 +36,23 @@ function createOpenGL(win: DwmWindow) {
 }
 
 addEventListener("redrawRequested", (event) => {
+  GL.glClear(GL.GL_COLOR_BUFFER_BIT);
+  GL.glBegin(GL.GL_TRIANGLES);
+  GL.glColor3f(1.0, 0.0, 0.0);
+  GL.glVertex2i(0, 1);
+  GL.glColor3f(0.0, 1.0, 0.0);
+  GL.glVertex2i(-1, -1);
+  GL.glColor3f(0.0, 0.0, 1.0);
+  GL.glVertex2i(1, -1);
+  GL.glEnd();
+  GL.glFlush();
+  GL.SwapBuffers(hDC);
   Gdi.BeginPaint(event.window.nativeHandle, paint);
   Gdi.EndPaint(event.window.nativeHandle, paint);
 });
 
 addEventListener("resize", (event) => {
-  GL.glViewport(0, 0, event.width & 0xffff, event.height >> 16);
+  GL.glViewport(0, 0, event.width, event.height);
   Gdi.BeginPaint(event.window.nativeHandle, paint);
   Gdi.EndPaint(event.window.nativeHandle, paint);
 });
@@ -59,18 +70,3 @@ createOpenGL(window);
 const hDC = Gdi.GetDC(window.nativeHandle);
 const hRC = GL.wglCreateContext(hDC);
 GL.wglMakeCurrent(hDC, hRC);
-
-while (!window.closed) {
-  GL.glClear(GL.GL_COLOR_BUFFER_BIT);
-  GL.glBegin(GL.GL_TRIANGLES);
-  GL.glColor3f(1.0, 0.0, 0.0);
-  GL.glVertex2i(0, 1);
-  GL.glColor3f(0.0, 1.0, 0.0);
-  GL.glVertex2i(-1, -1);
-  GL.glColor3f(0.0, 0.0, 1.0);
-  GL.glVertex2i(1, -1);
-  GL.glEnd();
-  GL.glFlush();
-  GL.SwapBuffers(hDC);
-  pollEvents();
-}

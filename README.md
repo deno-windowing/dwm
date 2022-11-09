@@ -11,7 +11,7 @@ Cross-platform window creation and management for Deno.
 ## Example
 
 ```ts
-import { createWindow, pollEvents } from "https://deno.land/x/dwm@0.1.0/mod.ts";
+import { createWindow } from "https://deno.land/x/dwm@0.1.0/mod.ts";
 
 const win = createWindow({
   title: "Hello World",
@@ -19,14 +19,23 @@ const win = createWindow({
   height: 600,
 });
 
-addEventListener("close", (event) => {
-  console.log("Window closed:", event.window.title);
+// Many DOM events are supported, such as:
+
+addEventListener("resize", (event) => {
+  console.log("Window resized", event.width, event.height);
 });
 
-while (!win.closed) {
-  pollEvents();
-}
+// Handle drawing logic using `requestAnimationFrame`
+// Alternatively, you can also draw on `redrawRequested` event
+
+addEventListener("redrawRequested", (event) => {
+  // Draw logic
+});
 ```
+
+For drawing, you can use
+[Deno GL (Name TODO)](https://github.com/deno-windowing/gluten), or even along
+with [Skia Canvas](https://github.com/DjDeveloperr/skia_canvas).
 
 ## Usage
 
@@ -39,7 +48,7 @@ deno run --unstable --allow-ffi <file>
 
 ## Maintainers
 
-- DjDeveloper ([@DjDeveloperr](https://github.com/DjDeveloperr))
+- Dj ([@DjDeveloperr](https://github.com/DjDeveloperr))
 - Loading ([@load1n9](https://github.com/load1n9))
 
 ## License

@@ -95,6 +95,13 @@ export interface CreateWindowOptions {
    * whether to remove the system menu
    */
   removeSystemMenu?: boolean;
+
+  /**
+   * Whether event loop should exit when window is closed.
+   * Defaults to true.
+   * Only works for non-child windows.
+   */
+  autoExitEventLoop?: boolean;
 }
 
 /**
