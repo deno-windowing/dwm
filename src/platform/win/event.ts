@@ -12,6 +12,20 @@ import VKEYS from "./virtual_key.json" assert { type: "json" };
 
 export const windows = new Map<Deno.PointerValue, WindowWin32>();
 
+export type AnimationFrameCallback = (time: number) => void;
+const animationFrames = new Map<number, AnimationFrameCallback>();
+let animationFrameId = 0;
+
+export function requestAnimationFrame(callback: AnimationFrameCallback) {
+  animationFrameId++;
+  animationFrames.set(animationFrameId, callback);
+  return animationFrameId;
+}
+
+export function cancelAnimationFrame(id: number) {
+  animationFrames.delete(id);
+}
+
 function processKeyEvent(
   name: string,
   win: WindowWin32,
@@ -124,6 +138,10 @@ export const lpfnWndProc = new Deno.UnsafeCallback(
     try {
       switch (msg) {
         case Wm.WM_PAINT: {
+          const now = performance.now();
+          for (const frame of animationFrames.values()) {
+            frame(now);
+          }
           const window = windows.get(hwnd);
           if (window) {
             dispatchEvent(new WindowRedrawRequestedEvent(window));
@@ -274,5 +292,17 @@ export function pollEvents() {
   while (Wm.PeekMessageW(MSG, null, 0, 0, Wm.PM_REMOVE)) {
     Wm.TranslateMessage(MSG);
     Wm.DispatchMessageW(MSG);
+  }
+}
+
+Object.assign(window, {
+  requestAnimationFrame,
+  cancelAnimationFrame,
+});
+
+declare global {
+  interface Window {
+    requestAnimationFrame: typeof requestAnimationFrame;
+    cancelAnimationFrame: typeof cancelAnimationFrame;
   }
 }
