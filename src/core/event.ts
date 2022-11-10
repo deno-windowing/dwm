@@ -1,5 +1,8 @@
 import { DwmWindow } from "./window.ts";
 
+/**
+ * Event Loop class
+ */
 export class EventLoop {
   static running = true;
 
@@ -12,6 +15,9 @@ export class EventLoop {
   }
 }
 
+/**
+ * Base window event class
+ */
 export class WindowEvent extends Event {
   loop = EventLoop;
 }
