@@ -116,11 +116,11 @@ export class WindowMouseEvent extends WindowEvent {
   }
 
   get pageX() {
-    return this.x;
+    return this.clientX;
   }
 
   get pageY() {
-    return this.y;
+    return this.clientY;
   }
 }
 
