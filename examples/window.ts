@@ -7,7 +7,7 @@ createWindow({
   resizable: true,
 });
 
-addEventListener("mousemove", (e) => {
+addEventListener("pointermove", (e) => {
   console.log(e.x, e.y);
 });
 
