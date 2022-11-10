@@ -108,6 +108,14 @@ export class WindowMouseEvent extends WindowEvent {
   get y() {
     return this.clientY;
   }
+
+  get pageX() {
+    return this.x;
+  }
+
+  get pageY() {
+    return this.y;
+  }
 }
 
 export type AnimationFrameCallback = (time: number) => void;
@@ -142,6 +150,9 @@ declare global {
     mousedown: WindowMouseEvent;
     mouseup: WindowMouseEvent;
     mousemove: WindowMouseEvent;
+    pointerdown: WindowMouseEvent;
+    pointerup: WindowMouseEvent;
+    pointermove: WindowMouseEvent;
     mouseenter: WindowMouseEvent;
     mouseleave: WindowMouseEvent;
     click: WindowMouseEvent;

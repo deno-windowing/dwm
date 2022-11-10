@@ -62,6 +62,7 @@ function processMouseEvent(
     }
     const x = Number(lParam) & 0xffff,
       y = Number(lParam) >> 16;
+
     let movementX = 0, movementY = 0;
     if (name === "mousemove") {
       const prevX = win._inputState.mouseX;
@@ -90,6 +91,27 @@ function processMouseEvent(
         (Number(wParam) & 0x0004) === 0x0004,
       ),
     );
+    if (["mousedown", "mouseup", "mousemove"].includes(name)) {
+      dispatchEvent(
+        new WindowMouseEvent(
+          name.replace("mouse", "pointer"),
+          win,
+          false,
+          btn,
+          btn,
+          x,
+          y,
+          (Number(wParam) & 0x0008) === 0x0008,
+          false,
+          movementX,
+          movementY,
+          0,
+          x,
+          y,
+          (Number(wParam) & 0x0004) === 0x0004,
+        ),
+      );
+    }
     if (name === "mouseup") {
       if (win._inputState[`mousedown_${btn}`]) {
         dispatchEvent(
