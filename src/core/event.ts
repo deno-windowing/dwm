@@ -71,6 +71,7 @@ export class WindowKeyboardEvent extends WindowEvent {
     public metaKey: boolean,
     public repeat: boolean,
     public shiftKey: boolean,
+    public keyCode: number,
   ) {
     super(name, {
       cancelable: true,

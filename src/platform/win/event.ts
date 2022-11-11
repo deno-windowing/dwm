@@ -44,6 +44,7 @@ function processKeyEvent(
       false,
       repeatCount > 1,
       false,
+      vkey,
     ),
   );
 }
@@ -283,7 +284,7 @@ export const lpfnWndProc = new Deno.UnsafeCallback(
         }
 
         case Wm.WM_MOUSEMOVE: {
-          processMouseEvent("mousemove", 0, hwnd, wParam, lParam);
+          processMouseEvent("mousemove", -1, hwnd, wParam, lParam);
           return 0;
         }
 
