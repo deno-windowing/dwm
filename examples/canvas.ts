@@ -1,11 +1,12 @@
 import { createWindow, mainloop } from "../mod.ts";
 import { createCanvas } from "https://deno.land/x/skia_canvas@0.3.1/mod.ts";
-// @deno-types="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/types/index.esm.d.ts"
 import {
   Chart,
   registerables,
 } from "https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.esm.js";
 
+// deno-lint-ignore ban-ts-comment
+// @ts-ignore
 Chart.register(...registerables);
 
 const win = createWindow({
@@ -64,7 +65,6 @@ const options = {
 };
 
 let chart = new Chart(canvas, options);
-
 let focused = true;
 
 addEventListener("framebuffersize", (event) => {
