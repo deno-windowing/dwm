@@ -9,5 +9,5 @@ export interface Platform {
 
   getProcAddress(name: string): Deno.PointerValue;
 
-  mainloop(cb?: (hrtime: number) => unknown): Promise<never>;
+  mainloop(cb?: (hrtime: number) => unknown, loop?: boolean): Promise<never>;
 }
