@@ -456,7 +456,7 @@ export class WindowGlfw extends DwmWindow {
       glfwWindowHint(0x00022002, 3);
       glfwWindowHint(0x00022003, 3);
     }
-    glfwWindowHint(0x00022001, 0x00030001);
+    glfwWindowHint(0x00022001, options.gles ? 0x00030002 : 0x00030001);
     glfwWindowHint(0x00022006, 1);
     glfwWindowHint(0x00022008, 0x00032001);
     glfwWindowHint(0x00020003, options.resizable ? 1 : 0);

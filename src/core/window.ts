@@ -49,6 +49,7 @@ export interface CreateWindowOptions {
   autoExitEventLoop?: boolean;
 
   glVersion?: [number, number];
+  gles?: boolean;
   vsync?: boolean;
 }
 
