@@ -15,15 +15,6 @@ export interface CreateWindowOptions {
    * Window's height
    */
   height?: number;
-  /**
-   * Window's x coordinate
-   */
-  x?: number;
-
-  /**
-   * Window's y coordinate
-   */
-  y?: number;
 
   /**
    * Whether the window is maximized
@@ -36,19 +27,9 @@ export interface CreateWindowOptions {
   minimized?: boolean;
 
   /**
-   * Whether the window is fullscreen
-   */
-  fullScreen?: boolean;
-
-  /**
    * Whether the window is focused
    */
   focused?: boolean;
-
-  /**
-   * Whether the window should stay on top
-   */
-  alwaysOnTop?: boolean;
 
   /**
    * Window's visibility
@@ -61,47 +42,14 @@ export interface CreateWindowOptions {
   resizable?: boolean;
 
   /**
-   * Whether the window is a child of another window
-   */
-  parent?: DwmWindow;
-
-  /**
-   * Whether to add a scrollBar specify "horizonal" for a horizontal scrollbar.
-   * will default to vertical if "vertical" specified or value is true
-   */
-  scrollBar?: boolean | "horizontal" | "vertical";
-
-  /**
-   * Whether the window is disabled
-   */
-  disabled?: boolean;
-
-  /**
-   * Whether the window accepts files
-   */
-  acceptFiles?: boolean;
-
-  /**
-   * Whether the window is a toolbar window
-   */
-  toolbar?: boolean;
-
-  /**
-   * Whether the window is palette
-   */
-  palette?: boolean;
-
-  /**
-   * whether to remove the system menu
-   */
-  removeSystemMenu?: boolean;
-
-  /**
    * Whether event loop should exit when window is closed.
    * Defaults to true.
    * Only works for non-child windows.
    */
   autoExitEventLoop?: boolean;
+
+  glVersion?: [number, number];
+  vsync?: boolean;
 }
 
 /**
@@ -133,6 +81,8 @@ export abstract class DwmWindow {
    */
   abstract size: Size;
 
+  abstract readonly framebufferSize: Size;
+
   /**
    * Change whether the window is maximized
    */
@@ -158,6 +108,10 @@ export abstract class DwmWindow {
    */
   abstract visible: boolean;
 
+  abstract opacity: number;
+
+  abstract readonly shouldClose: boolean;
+
   constructor(_options: CreateWindowOptions) {}
 
   /**
@@ -165,10 +119,11 @@ export abstract class DwmWindow {
    */
   abstract close(): void;
 
-  /**
-   * Requests a redraw
-   */
-  abstract requestRedraw(): void;
+  abstract swapBuffers(): void;
+
+  abstract makeContextCurrent(): void;
+
+  abstract requestUserAttention(): void;
 
   /**
    * Check if the window is closed

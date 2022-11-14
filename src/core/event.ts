@@ -20,6 +20,12 @@ export class EventLoop {
  */
 export class WindowEvent extends Event {
   loop = EventLoop;
+
+  declare window: DwmWindow;
+
+  match(window: DwmWindow) {
+    return window.id === this.window.id;
+  }
 }
 
 /**
@@ -43,6 +49,50 @@ export class WindowResizeEvent extends WindowEvent {
     public height: number,
   ) {
     super("resize");
+  }
+}
+
+export class WindowFramebufferSizeEvent extends WindowEvent {
+  constructor(
+    public window: DwmWindow,
+    public width: number,
+    public height: number,
+  ) {
+    super("framebuffersize");
+  }
+}
+
+export class WindowMoveEvent extends WindowEvent {
+  constructor(
+    public window: DwmWindow,
+    public x: number,
+    public y: number,
+  ) {
+    super("move");
+  }
+}
+
+export class WindowRefreshEvent extends WindowEvent {
+  constructor(public window: DwmWindow) {
+    super("refresh");
+  }
+}
+
+export class WindowFocusEvent extends WindowEvent {
+  constructor(public window: DwmWindow, public focused: boolean) {
+    super("focus");
+  }
+}
+
+export class WindowMinimizeEvent extends WindowEvent {
+  constructor(public window: DwmWindow, public minimized: boolean) {
+    super("minimize");
+  }
+}
+
+export class WindowMaximizeEvent extends WindowEvent {
+  constructor(public window: DwmWindow, public maximized: boolean) {
+    super("maximize");
   }
 }
 
@@ -125,7 +175,35 @@ export class WindowMouseEvent extends WindowEvent {
   }
 }
 
-export type AnimationFrameCallback = (time: number) => void;
+export class WindowInputEvent extends WindowEvent {
+  constructor(
+    public window: DwmWindow,
+    public data: string,
+  ) {
+    super("input");
+  }
+}
+
+export class WindowScrollEvent extends WindowEvent {
+  constructor(
+    public window: DwmWindow,
+    public scrollX: number,
+    public scrollY: number,
+  ) {
+    super("scroll");
+  }
+}
+
+export class WindowDropEvent extends WindowEvent {
+  constructor(
+    public window: DwmWindow,
+    public files: string[],
+  ) {
+    super("drop");
+  }
+}
+
+export type AnimationFrameCallback = (time: number) => unknown;
 export const animationFrames = new Map<number, AnimationFrameCallback>();
 let animationFrameId = 0;
 
@@ -165,5 +243,14 @@ declare global {
     click: WindowMouseEvent;
     dblclick: WindowMouseEvent;
     contextmenu: WindowMouseEvent;
+    move: WindowMoveEvent;
+    refresh: WindowRefreshEvent;
+    focus: WindowFocusEvent;
+    minimize: WindowMinimizeEvent;
+    maximize: WindowMaximizeEvent;
+    input: WindowInputEvent;
+    framebuffersize: WindowFramebufferSizeEvent;
+    scroll: WindowScrollEvent;
+    drop: WindowDropEvent;
   }
 }

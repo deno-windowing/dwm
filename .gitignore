@@ -1,2 +1,3 @@
 .vscode/
 deno.lock
+glfw3.dll
