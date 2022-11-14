@@ -654,17 +654,42 @@ export class WindowGlfw extends DwmWindow {
 
 export async function mainloop(
   cb?: (hrtime: number) => unknown,
+  loop = true,
 ): Promise<never> {
-  while (EventLoop.running) {
-    const now = performance.now();
-    const frames = [...animationFrames.values()];
-    animationFrames.clear();
-    for (const frame of frames) {
-      await frame(now);
+  if (loop) {
+    while (EventLoop.running) {
+      const now = performance.now();
+      const frames = [...animationFrames.values()];
+      animationFrames.clear();
+      for (const frame of frames) {
+        await frame(now);
+      }
+      await cb?.(now);
+      glfwPollEvents();
     }
-    await cb?.(now);
-    glfwPollEvents();
+    glfwTerminate();
+    Deno.exit(0);
+  } else {
+    let resolve!: CallableFunction;
+    const fn = async () => {
+      if (!EventLoop.running) {
+        resolve();
+        glfwTerminate();
+        Deno.exit(0);
+      }
+      const now = performance.now();
+      const frames = [...animationFrames.values()];
+      animationFrames.clear();
+      for (const frame of frames) {
+        await frame(now);
+      }
+      await cb?.(now);
+      glfwPollEvents();
+      setTimeout(fn, 0);
+    };
+    setTimeout(fn, 0);
+    return new Promise((r) => {
+      resolve = r;
+    });
   }
-  glfwTerminate();
-  Deno.exit(0);
 }
