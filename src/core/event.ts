@@ -29,11 +29,22 @@ export class WindowEvent extends Event {
 }
 
 /**
- * Event triggered when a window is closed
+ * Event triggered when a window requested to close
  */
 export class WindowCloseEvent extends WindowEvent {
   constructor(public window: DwmWindow) {
     super("close", {
+      cancelable: true,
+    });
+  }
+}
+
+/**
+ * Event triggered when a window is closed
+ */
+export class WindowClosedEvent extends WindowEvent {
+  constructor(public window: DwmWindow) {
+    super("closed", {
       cancelable: true,
     });
   }
@@ -228,6 +239,7 @@ declare global {
 
   interface WindowEventMap {
     close: WindowCloseEvent;
+    closed: WindowClosedEvent;
     resize: WindowResizeEvent;
     redrawRequested: WindowRedrawRequestedEvent;
     keydown: WindowKeyboardEvent;

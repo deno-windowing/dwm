@@ -2,6 +2,7 @@ import { Position, Size } from "../../core/common.ts";
 import {
   animationFrames,
   EventLoop,
+  WindowClosedEvent,
   WindowCloseEvent,
   WindowDropEvent,
   WindowFocusEvent,
@@ -641,6 +642,7 @@ export class WindowGlfw extends DwmWindow {
 
   close() {
     this.#closed = true;
+    dispatchEvent(new WindowClosedEvent(this));
     glfwDestroyWindow(this.#nativeHandle);
     WINDOWS.delete(this.#nativeHandle);
     if (this.#counted) {

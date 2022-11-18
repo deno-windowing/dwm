@@ -1,5 +1,4 @@
-import { createWindow, mainloop } from "../mod.ts";
-import { createCanvas } from "https://deno.land/x/skia_canvas@0.3.1/mod.ts";
+import { mainloop, WindowCanvas } from "../ext/canvas.ts";
 import {
   Chart,
   registerables,
@@ -9,16 +8,12 @@ import {
 // @ts-ignore
 Chart.register(...registerables);
 
-const win = createWindow({
+const win = new WindowCanvas({
   title: "Skia Canvas",
   width: 800,
   height: 600,
   resizable: true,
-  glVersion: [3, 3],
 });
-
-const fbSize = win.framebufferSize;
-const canvas = createCanvas(fbSize.width, fbSize.height, true);
 
 const data = {
   labels: ["January", "February", "March", "April", "May", "June", "July"],
@@ -64,20 +59,15 @@ const options = {
   ],
 };
 
-let chart = new Chart(canvas, options);
-let focused = true;
+let chart = new Chart(win.canvas, options);
 
-addEventListener("framebuffersize", (event) => {
-  if (event.width === 0 || event.height === 0) return focused = false;
-  focused = true;
-  canvas.resize(event.width, event.height);
+win.onContextLoss = () => {
   chart.destroy();
-  chart = new Chart(canvas, options);
-});
+  chart = new Chart(win.canvas, options);
+};
 
 await mainloop(() => {
-  if (!focused) return;
+  win.makeContextCurrent();
   chart.render();
-  canvas.flush();
-  win.swapBuffers();
+  win.flush();
 });
