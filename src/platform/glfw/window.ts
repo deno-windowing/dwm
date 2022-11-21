@@ -445,7 +445,7 @@ const dropCallback = new Deno.UnsafeCallback(
     const window = WINDOWS.get(handle);
     if (window) {
       const out = [];
-      const view = new Deno.UnsafePointerView(paths);
+      const view = new Deno.UnsafePointerView(BigInt(paths));
       for (let i = 0; i < count; i++) {
         const path = Number(view.getBigUint64(i * 8));
         out.push(Deno.UnsafePointerView.getCString(path));

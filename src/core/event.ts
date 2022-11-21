@@ -63,6 +63,9 @@ export class WindowResizeEvent extends WindowEvent {
   }
 }
 
+/**
+ * Event triggered when a window's framebuffersize is changed
+ */
 export class WindowFramebufferSizeEvent extends WindowEvent {
   constructor(
     public window: DwmWindow,
@@ -73,6 +76,9 @@ export class WindowFramebufferSizeEvent extends WindowEvent {
   }
 }
 
+/**
+ * Event triggered when a window is moved
+ */
 export class WindowMoveEvent extends WindowEvent {
   constructor(
     public window: DwmWindow,
@@ -83,24 +89,36 @@ export class WindowMoveEvent extends WindowEvent {
   }
 }
 
+/**
+ * Event triggered when a window is refreshed
+ */
 export class WindowRefreshEvent extends WindowEvent {
   constructor(public window: DwmWindow) {
     super("refresh");
   }
 }
 
+/**
+ * Event triggered when a window is focused
+ */
 export class WindowFocusEvent extends WindowEvent {
   constructor(public window: DwmWindow, public focused: boolean) {
     super("focus");
   }
 }
 
+/**
+ * Event triggered when a window is minimized
+ */
 export class WindowMinimizeEvent extends WindowEvent {
   constructor(public window: DwmWindow, public minimized: boolean) {
     super("minimize");
   }
 }
 
+/**
+ * Event triggered when a window is maximized
+ */
 export class WindowMaximizeEvent extends WindowEvent {
   constructor(public window: DwmWindow, public maximized: boolean) {
     super("maximize");
@@ -186,6 +204,9 @@ export class WindowMouseEvent extends WindowEvent {
   }
 }
 
+/**
+ * Event triggered when a window receives input
+ */
 export class WindowInputEvent extends WindowEvent {
   constructor(
     public window: DwmWindow,
@@ -195,6 +216,9 @@ export class WindowInputEvent extends WindowEvent {
   }
 }
 
+/**
+ * Event triggered when a window is scrolled
+ */
 export class WindowScrollEvent extends WindowEvent {
   constructor(
     public window: DwmWindow,
@@ -205,6 +229,9 @@ export class WindowScrollEvent extends WindowEvent {
   }
 }
 
+/**
+ * Event triggered when a window is dropped
+ */
 export class WindowDropEvent extends WindowEvent {
   constructor(
     public window: DwmWindow,
