@@ -51,6 +51,9 @@ export interface CreateWindowOptions {
   glVersion?: [number, number];
   gles?: boolean;
   vsync?: boolean;
+  removeDecorations?: boolean;
+  transparent?: boolean;
+  floating?: boolean;
 }
 
 /**
