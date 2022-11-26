@@ -482,7 +482,6 @@ export class WindowGlfw extends DwmWindow {
 
   constructor(options: CreateWindowOptions = {}) {
     super(options);
-    // HEAD
     if (options.noClientAPI) {
       this.#noClientAPI = true;
       glfwWindowHint(0x00022001, 0);
@@ -502,25 +501,6 @@ export class WindowGlfw extends DwmWindow {
       glfwWindowHint(0x00022008, 0x00032001);
       glfwWindowHint(0x0002100D, 4);
     }
-    glfwWindowHint(0x00020003, options.resizable ? 1 : 0);
-    glfwWindowHint(0x00020004, 0);
-    glfwWindowHint(0x00020008, options.maximized ? 1 : 0);
-    //
-    if (options.glVersion) {
-      glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, options.glVersion[0]);
-      glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, options.glVersion[1]);
-    } else {
-      glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-      glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    }
-    glfwWindowHint(
-      GLFW_CLIENT_API,
-      options.gles ? GLFW_OPENGL_ES_API : GLFW_OPENGL_API,
-    );
-    glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, options.transparent ? 1 : 0);
-    glfwWindowHint(GLFW_FLOATING, options.floating ? 1 : 0);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, 1);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, options.resizable ? 1 : 0);
     glfwWindowHint(GLFW_VISIBLE, 0);
     glfwWindowHint(GLFW_MAXIMIZED, options.maximized ? 1 : 0);
