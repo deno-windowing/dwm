@@ -4,5 +4,11 @@
     "example_opengl": "deno run -A --unstable examples/opengl.ts",
     "example_child_window": "deno run -A --unstable examples/child-window.ts",
     "example": "deno run -A --unstable examples/window.ts"
+  },
+
+  "lint": {
+    "rules": {
+      "exclude": ["no-unused-vars"]
+    }
   }
 }
