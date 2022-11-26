@@ -9,6 +9,7 @@ import {
   DwmWindow,
   WindowClosedEvent,
   WindowFramebufferSizeEvent,
+  WindowRefreshEvent,
 } from "../mod.ts";
 
 export class WindowCanvas {
@@ -19,6 +20,7 @@ export class WindowCanvas {
   #toDraw = true;
 
   onContextLoss?: () => void;
+  onDraw?: (ctx: CanvasRenderingContext2D) => unknown;
 
   constructor(options: CreateWindowOptions = {}) {
     this.window = createWindow(options);
@@ -35,15 +37,22 @@ export class WindowCanvas {
       this.#resize(evt.width, evt.height);
     };
 
+    const onRefresh = async (evt: WindowRefreshEvent) => {
+      if (!evt.match(this.window)) return;
+      await this.draw();
+    };
+
     const onClosed = (evt: WindowClosedEvent) => {
       if (!evt.match(this.window)) return;
       removeEventListener("framebuffersize", onFramebuffersize);
       removeEventListener("closed", onClosed);
+      removeEventListener("refresh", onRefresh);
       this.#toDraw = false;
     };
 
     addEventListener("framebuffersize", onFramebuffersize);
     addEventListener("closed", onClosed);
+    addEventListener("refresh", onRefresh);
   }
 
   #resize(width: number, height: number) {
@@ -61,6 +70,13 @@ export class WindowCanvas {
     if (!this.#toDraw) return;
     this.canvas.flush();
     this.window.swapBuffers();
+  }
+
+  async draw() {
+    if (!this.#toDraw) return;
+    this.makeContextCurrent();
+    await this.onDraw?.(this.ctx);
+    this.flush();
   }
 }
 

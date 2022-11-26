@@ -213,6 +213,47 @@ export const ffi = Deno.dlopen(
       parameters: ["pointer", "buffer", "buffer"],
       result: "void",
     },
+    glfwSetCursor: {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    },
+    glfwCreateStandardCursor: {
+      parameters: ["i32"],
+      result: "pointer",
+    },
+    glfwDestroyCursor: {
+      parameters: ["pointer"],
+      result: "void",
+    },
+    glfwCreateCursor: {
+      parameters: ["buffer", "i32", "i32"],
+      result: "pointer",
+    },
+    glfwWaitEvents: {
+      parameters: [],
+      result: "void",
+      callback: true,
+    },
+    glfwVulkanSupported: {
+      parameters: [],
+      result: "i32",
+    },
+    glfwGetRequiredInstanceExtensions: {
+      parameters: ["buffer"],
+      result: "pointer",
+    },
+    glfwGetInstanceProcAddress: {
+      parameters: ["pointer", "buffer"],
+      result: "pointer",
+    },
+    glfwGetPhysicalDevicePresentationSupport: {
+      parameters: ["pointer", "pointer", "i32"],
+      result: "i32",
+    },
+    glfwCreateWindowSurface: {
+      parameters: ["pointer", "pointer", "pointer", "buffer"],
+      result: "i32",
+    },
   } as const,
 ).symbols;
 

@@ -17,7 +17,11 @@ import {
   WindowResizeEvent,
   WindowScrollEvent,
 } from "../../core/event.ts";
-import { CreateWindowOptions, DwmWindow } from "../../core/window.ts";
+import {
+  CreateWindowOptions,
+  CursorIcon,
+  DwmWindow,
+} from "../../core/window.ts";
 import { cstr, ffi } from "./ffi.ts";
 import SCANCODE_WIN from "./scancode_win.json" assert { type: "json" };
 
@@ -73,6 +77,10 @@ const {
   glfwSetMouseButtonCallback,
   glfwSetScrollCallback,
   glfwRequestWindowAttention,
+  glfwSetCursor,
+  glfwCreateStandardCursor,
+  glfwDestroyCursor,
+  glfwWaitEvents,
 } = ffi;
 
 if (!glfwInit()) {
@@ -98,8 +106,12 @@ glfwSetErrorCallback(errorCallback.pointer);
 const I32_0 = new Int32Array(1);
 const I32_1 = new Int32Array(1);
 
-export function pollEvents() {
-  glfwPollEvents();
+export function pollEvents(wait = false) {
+  if (wait) {
+    glfwWaitEvents();
+  } else {
+    glfwPollEvents();
+  }
 }
 
 export function getProcAddress(name: string) {
@@ -440,6 +452,7 @@ export class WindowGlfw extends DwmWindow {
   #nativeHandle: Deno.PointerValue;
   #title = "";
   #counted = false;
+  #noClientAPI = false;
 
   // deno-lint-ignore no-explicit-any
   _inputState: Record<string, any> = {};
@@ -450,20 +463,28 @@ export class WindowGlfw extends DwmWindow {
 
   constructor(options: CreateWindowOptions = {}) {
     super(options);
-    if (options.glVersion) {
-      glfwWindowHint(0x00022002, options.glVersion[0]);
-      glfwWindowHint(0x00022003, options.glVersion[1]);
+    if (options.noClientAPI) {
+      this.#noClientAPI = true;
+      glfwWindowHint(0x00022001, 0);
     } else {
-      glfwWindowHint(0x00022002, 3);
-      glfwWindowHint(0x00022003, 3);
+      if (options.glVersion) {
+        glfwWindowHint(0x00022002, options.glVersion[0]);
+        glfwWindowHint(0x00022003, options.glVersion[1]);
+      } else {
+        glfwWindowHint(0x00022002, 3);
+        glfwWindowHint(0x00022003, 3);
+      }
+      glfwWindowHint(
+        0x00022001,
+        options.gles ? 0x00030002 : 0x00030001,
+      );
+      glfwWindowHint(0x00022006, 1);
+      glfwWindowHint(0x00022008, 0x00032001);
+      glfwWindowHint(0x0002100D, 4);
     }
-    glfwWindowHint(0x00022001, options.gles ? 0x00030002 : 0x00030001);
-    glfwWindowHint(0x00022006, 1);
-    glfwWindowHint(0x00022008, 0x00032001);
     glfwWindowHint(0x00020003, options.resizable ? 1 : 0);
     glfwWindowHint(0x00020004, 0);
     glfwWindowHint(0x00020008, options.maximized ? 1 : 0);
-    glfwWindowHint(0x0002100D, 4);
     this.#nativeHandle = glfwCreateWindow(
       options.width ?? 800,
       options.height ?? 600,
@@ -515,9 +536,12 @@ export class WindowGlfw extends DwmWindow {
       }
       this.#counted = true;
     }
-    this.makeContextCurrent();
-    if (options.vsync !== false) {
-      glfwSwapInterval(1);
+
+    if (!options.noClientAPI) {
+      this.makeContextCurrent();
+      if (options.vsync !== false) {
+        glfwSwapInterval(1);
+      }
     }
 
     if (options.minimized) {
@@ -627,11 +651,40 @@ export class WindowGlfw extends DwmWindow {
   }
 
   makeContextCurrent() {
+    if (this.#noClientAPI) return;
     glfwMakeContextCurrent(this.#nativeHandle);
   }
 
   swapBuffers() {
     glfwSwapBuffers(this.#nativeHandle);
+  }
+
+  #cursor: Deno.PointerValue | null = null;
+
+  setCursor(icon?: CursorIcon | undefined) {
+    if (icon) {
+      const cursor = glfwCreateStandardCursor(
+        {
+          arrow: 0x00036001,
+          ibeam: 0x00036002,
+          crosshair: 0x00036003,
+          hand: 0x00036004,
+          hresize: 0x00036005,
+          vresize: 0x00036006,
+        }[icon],
+      );
+      glfwSetCursor(this.#nativeHandle, cursor);
+      if (this.#cursor) {
+        glfwDestroyCursor(this.#cursor);
+      }
+      this.#cursor = cursor;
+    } else {
+      glfwSetCursor(this.#nativeHandle, null);
+      if (this.#cursor) {
+        glfwDestroyCursor(this.#cursor);
+        this.#cursor = null;
+      }
+    }
   }
 
   #closed = false;
@@ -657,6 +710,7 @@ export class WindowGlfw extends DwmWindow {
 export async function mainloop(
   cb?: (hrtime: number) => unknown,
   loop = true,
+  wait = false,
 ): Promise<never> {
   if (loop) {
     while (EventLoop.running) {
@@ -667,7 +721,7 @@ export async function mainloop(
         await frame(now);
       }
       await cb?.(now);
-      glfwPollEvents();
+      pollEvents(wait);
     }
     glfwTerminate();
     Deno.exit(0);
@@ -686,7 +740,7 @@ export async function mainloop(
         await frame(now);
       }
       await cb?.(now);
-      glfwPollEvents();
+      pollEvents(wait);
       setTimeout(fn, 0);
     };
     setTimeout(fn, 0);

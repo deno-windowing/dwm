@@ -51,7 +51,16 @@ export interface CreateWindowOptions {
   glVersion?: [number, number];
   gles?: boolean;
   vsync?: boolean;
+  noClientAPI?: boolean;
 }
+
+export type CursorIcon =
+  | "arrow"
+  | "ibeam"
+  | "crosshair"
+  | "hand"
+  | "hresize"
+  | "vresize";
 
 /**
  * Represents a Window
@@ -125,6 +134,8 @@ export abstract class DwmWindow {
   abstract makeContextCurrent(): void;
 
   abstract requestUserAttention(): void;
+
+  abstract setCursor(icon?: CursorIcon): void;
 
   /**
    * Check if the window is closed

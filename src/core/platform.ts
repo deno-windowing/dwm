@@ -5,9 +5,9 @@ export interface Platform {
     new (options: CreateWindowOptions): DwmWindow;
   } & typeof DwmWindow;
 
-  pollEvents(): void;
+  pollEvents(wait?: boolean): void;
 
   getProcAddress(name: string): Deno.PointerValue;
 
-  mainloop(cb?: (hrtime: number) => unknown, loop?: boolean): Promise<never>;
+  mainloop(cb?: (hrtime: number) => unknown, loop?: boolean, wait?: boolean): Promise<never>;
 }
