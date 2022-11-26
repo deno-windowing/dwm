@@ -22,6 +22,25 @@ import {
   CursorIcon,
   DwmWindow,
 } from "../../core/window.ts";
+import {
+  GLFW_CLIENT_API,
+  GLFW_CONTEXT_VERSION_MAJOR,
+  GLFW_CONTEXT_VERSION_MINOR,
+  GLFW_DECORATED,
+  GLFW_FLOATING,
+  GLFW_FOCUSED,
+  GLFW_ICONIFIED,
+  GLFW_MAXIMIZED,
+  GLFW_OPENGL_API,
+  GLFW_OPENGL_CORE_PROFILE,
+  GLFW_OPENGL_ES_API,
+  GLFW_OPENGL_FORWARD_COMPAT,
+  GLFW_OPENGL_PROFILE,
+  GLFW_RESIZABLE,
+  GLFW_SAMPLES,
+  GLFW_TRANSPARENT_FRAMEBUFFER,
+  GLFW_VISIBLE,
+} from "./constants.ts";
 import { cstr, ffi } from "./ffi.ts";
 import SCANCODE_WIN from "./scancode_win.json" assert { type: "json" };
 
@@ -438,7 +457,7 @@ const dropCallback = new Deno.UnsafeCallback(
     const window = WINDOWS.get(handle);
     if (window) {
       const out = [];
-      const view = new Deno.UnsafePointerView(paths);
+      const view = new Deno.UnsafePointerView(BigInt(paths));
       for (let i = 0; i < count; i++) {
         const path = Number(view.getBigUint64(i * 8));
         out.push(Deno.UnsafePointerView.getCString(path));
@@ -463,6 +482,7 @@ export class WindowGlfw extends DwmWindow {
 
   constructor(options: CreateWindowOptions = {}) {
     super(options);
+    // HEAD
     if (options.noClientAPI) {
       this.#noClientAPI = true;
       glfwWindowHint(0x00022001, 0);
@@ -485,6 +505,28 @@ export class WindowGlfw extends DwmWindow {
     glfwWindowHint(0x00020003, options.resizable ? 1 : 0);
     glfwWindowHint(0x00020004, 0);
     glfwWindowHint(0x00020008, options.maximized ? 1 : 0);
+    //
+    if (options.glVersion) {
+      glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, options.glVersion[0]);
+      glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, options.glVersion[1]);
+    } else {
+      glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+      glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    }
+    glfwWindowHint(
+      GLFW_CLIENT_API,
+      options.gles ? GLFW_OPENGL_ES_API : GLFW_OPENGL_API,
+    );
+    glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, options.transparent ? 1 : 0);
+    glfwWindowHint(GLFW_FLOATING, options.floating ? 1 : 0);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, 1);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_RESIZABLE, options.resizable ? 1 : 0);
+    glfwWindowHint(GLFW_VISIBLE, 0);
+    glfwWindowHint(GLFW_MAXIMIZED, options.maximized ? 1 : 0);
+    glfwWindowHint(GLFW_SAMPLES, 4);
+    glfwWindowHint(GLFW_DECORATED, options.removeDecorations ? 0 : 1);
+    //b63a41d67c1838cb219da4a91892d8bf23801c97
     this.#nativeHandle = glfwCreateWindow(
       options.width ?? 800,
       options.height ?? 600,
@@ -496,7 +538,6 @@ export class WindowGlfw extends DwmWindow {
       throw new Error("Failed to create window");
     }
     WINDOWS.set(this.#nativeHandle, this);
-
     glfwSetCursorPosCallback(this.#nativeHandle, cursorPosCallback.pointer);
     glfwSetWindowPosCallback(this.#nativeHandle, windowPosCallback.pointer);
     glfwSetWindowSizeCallback(this.#nativeHandle, windowSizeCallback.pointer);
@@ -562,7 +603,7 @@ export class WindowGlfw extends DwmWindow {
   }
 
   get focused() {
-    return glfwGetWindowAttrib(this.#nativeHandle, 0x00020001) === 1;
+    return glfwGetWindowAttrib(this.#nativeHandle, GLFW_FOCUSED) === 1;
   }
 
   set focused(value: boolean) {
@@ -572,7 +613,7 @@ export class WindowGlfw extends DwmWindow {
   }
 
   get visible() {
-    return glfwGetWindowAttrib(this.#nativeHandle, 0x00020004) === 1;
+    return glfwGetWindowAttrib(this.#nativeHandle, GLFW_VISIBLE) === 1;
   }
 
   set visible(value: boolean) {
@@ -584,7 +625,7 @@ export class WindowGlfw extends DwmWindow {
   }
 
   get maximized() {
-    return glfwGetWindowAttrib(this.#nativeHandle, 0x00020008) === 1;
+    return glfwGetWindowAttrib(this.#nativeHandle, GLFW_MAXIMIZED) === 1;
   }
 
   set maximized(value: boolean) {
@@ -596,7 +637,7 @@ export class WindowGlfw extends DwmWindow {
   }
 
   get minimized() {
-    return glfwGetWindowAttrib(this.#nativeHandle, 0x00020002) === 1;
+    return glfwGetWindowAttrib(this.#nativeHandle, GLFW_ICONIFIED) === 1;
   }
 
   set minimized(value: boolean) {

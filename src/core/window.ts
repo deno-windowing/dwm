@@ -48,10 +48,36 @@ export interface CreateWindowOptions {
    */
   autoExitEventLoop?: boolean;
 
+  /**
+   * Which GL version to use
+   */
   glVersion?: [number, number];
+
+  /**
+   * Should GLES be used
+   */
   gles?: boolean;
+
+  /**
+   * Whether to limit the number of fps
+   */
   vsync?: boolean;
   noClientAPI?: boolean;
+
+  /**
+   * Remove decorations from the window (title, frame, etc)
+   */
+  removeDecorations?: boolean;
+
+  /**
+   * Whether the window should be transparent
+   */
+  transparent?: boolean;
+
+  /**
+   * Whether the window is a floating window/ topmost window
+   */
+  floating?: boolean;
 }
 
 export type CursorIcon =
@@ -91,6 +117,9 @@ export abstract class DwmWindow {
    */
   abstract size: Size;
 
+  /**
+   * Window's framebuffer size
+   */
   abstract readonly framebufferSize: Size;
 
   /**
@@ -118,8 +147,14 @@ export abstract class DwmWindow {
    */
   abstract visible: boolean;
 
+  /**
+   * Opacity of the window
+   */
   abstract opacity: number;
 
+  /**
+   * Whether the window should close
+   */
   abstract readonly shouldClose: boolean;
 
   constructor(_options: CreateWindowOptions) {}
@@ -129,10 +164,19 @@ export abstract class DwmWindow {
    */
   abstract close(): void;
 
+  /**
+   * Swaps the window's buffers
+   */
   abstract swapBuffers(): void;
 
+  /**
+   * Sets this window's context as the current context
+   */
   abstract makeContextCurrent(): void;
 
+  /**
+   * Requests the User's attention
+   */
   abstract requestUserAttention(): void;
 
   abstract setCursor(icon?: CursorIcon): void;
