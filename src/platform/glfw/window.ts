@@ -540,6 +540,7 @@ export class WindowGlfw extends DwmWindow {
       glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, 1);
       glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
       glfwWindowHint(GLFW_SAMPLES, 4);
+      this.#noClientAPI = false;
     } else {
       this.#noClientAPI = true;
       glfwWindowHint(GLFW_CLIENT_API, 0);
@@ -603,7 +604,7 @@ export class WindowGlfw extends DwmWindow {
       this.#counted = true;
     }
 
-    if (!options.noClientAPI) {
+    if (!this.noClientAPI) {
       this.makeContextCurrent();
       if (options.vsync !== false) {
         glfwSwapInterval(1);
