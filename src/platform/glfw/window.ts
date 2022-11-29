@@ -549,6 +549,7 @@ export class WindowGlfw extends DwmWindow {
     glfwWindowHint(GLFW_RESIZABLE, options.resizable ? 1 : 0);
     glfwWindowHint(GLFW_VISIBLE, 0);
     glfwWindowHint(GLFW_MAXIMIZED, options.maximized ? 1 : 0);
+    glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, options.transparent ? 1 : 0);
     glfwWindowHint(GLFW_DECORATED, options.removeDecorations ? 0 : 1);
 
     this.#nativeHandle = glfwCreateWindow(
