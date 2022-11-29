@@ -54,14 +54,18 @@ export interface CreateWindowOptions {
   glVersion?: [number, number];
 
   /**
-   * Should GLES be used
+   * Should GLES be used (only for OpenGL)
    */
   gles?: boolean;
 
   /**
-   * Whether to limit the number of fps
+   * Whether to limit the number of frames per second (only for OpenGL)
    */
   vsync?: boolean;
+
+  /**
+   * Whether to not use any Client API.
+   */
   noClientAPI?: boolean;
 
   /**
@@ -165,12 +169,12 @@ export abstract class DwmWindow {
   abstract close(): void;
 
   /**
-   * Swaps the window's buffers
+   * Swaps the window's buffers (Only for OpenGL)
    */
   abstract swapBuffers(): void;
 
   /**
-   * Sets this window's context as the current context
+   * Sets this window's context as the current context (Only for OpenGL)
    */
   abstract makeContextCurrent(): void;
 
@@ -179,7 +183,18 @@ export abstract class DwmWindow {
    */
   abstract requestUserAttention(): void;
 
+  /**
+   * Sets the cursor icon
+   */
   abstract setCursor(icon?: CursorIcon): void;
+
+  /**
+   * Create a VkSurfaceKHR for this window (Only for Vulkan)
+   */
+  abstract createSurface(
+    instance: Deno.PointerValue,
+    allocator?: Deno.PointerValue,
+  ): Deno.PointerValue;
 
   /**
    * Check if the window is closed

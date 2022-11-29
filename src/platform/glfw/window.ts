@@ -100,11 +100,18 @@ const {
   glfwCreateStandardCursor,
   glfwDestroyCursor,
   glfwWaitEvents,
+  glfwVulkanSupported,
+  glfwGetRequiredInstanceExtensions,
+  glfwGetPhysicalDevicePresentationSupport,
+  glfwCreateWindowSurface,
+  glfwGetInstanceProcAddress,
 } = ffi;
 
 if (!glfwInit()) {
   throw new Error("Failed to initialize GLFW");
 }
+
+const MAX_SAFE_INT = BigInt(Number.MAX_SAFE_INTEGER);
 
 const errorCallback = new Deno.UnsafeCallback(
   {
@@ -122,6 +129,8 @@ const errorCallback = new Deno.UnsafeCallback(
 
 glfwSetErrorCallback(errorCallback.pointer);
 
+const U32_0 = new Uint32Array(1);
+const U64_0 = new BigUint64Array(1);
 const I32_0 = new Int32Array(1);
 const I32_1 = new Int32Array(1);
 
@@ -135,6 +144,41 @@ export function pollEvents(wait = false) {
 
 export function getProcAddress(name: string) {
   return glfwGetProcAddress(cstr(name));
+}
+
+export function vulkanSupported() {
+  return glfwVulkanSupported() === 1;
+}
+
+export function getRequiredInstanceExtensions() {
+  const ptr = glfwGetRequiredInstanceExtensions(new Uint8Array(U32_0.buffer));
+  const extensions = new Array<string>(U32_0[0]);
+  for (let i = 0; i < extensions.length; i++) {
+    extensions[i] = Deno.UnsafePointerView.getCString(
+      // deno-lint-ignore no-explicit-any
+      (ptr as any) + (typeof ptr === "number" ? (i * 8) : BigInt(i * 8)),
+    );
+  }
+  return extensions;
+}
+
+export function getPhysicalDevicePresentationSupport(
+  instance: Deno.PointerValue,
+  device: Deno.PointerValue,
+  queueFamily: number,
+) {
+  return glfwGetPhysicalDevicePresentationSupport(
+    instance,
+    device,
+    queueFamily,
+  ) === 1;
+}
+
+export function getInstanceProcAddress(
+  instance: Deno.PointerValue,
+  name: string,
+) {
+  return glfwGetInstanceProcAddress(instance, cstr(name));
 }
 
 const WINDOWS = new Map<Deno.PointerValue, WindowGlfw>();
@@ -480,33 +524,32 @@ export class WindowGlfw extends DwmWindow {
     return this.#nativeHandle;
   }
 
+  get noClientAPI() {
+    return this.#noClientAPI;
+  }
+
   constructor(options: CreateWindowOptions = {}) {
     super(options);
-    if (options.noClientAPI) {
-      this.#noClientAPI = true;
-      glfwWindowHint(0x00022001, 0);
-    } else {
-      if (options.glVersion) {
-        glfwWindowHint(0x00022002, options.glVersion[0]);
-        glfwWindowHint(0x00022003, options.glVersion[1]);
-      } else {
-        glfwWindowHint(0x00022002, 3);
-        glfwWindowHint(0x00022003, 3);
-      }
+    if (options.glVersion) {
+      glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, options.glVersion[0]);
+      glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, options.glVersion[1]);
       glfwWindowHint(
-        0x00022001,
-        options.gles ? 0x00030002 : 0x00030001,
+        GLFW_CLIENT_API,
+        options.gles ? GLFW_OPENGL_ES_API : GLFW_OPENGL_API,
       );
-      glfwWindowHint(0x00022006, 1);
-      glfwWindowHint(0x00022008, 0x00032001);
-      glfwWindowHint(0x0002100D, 4);
+      glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, 1);
+      glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+      glfwWindowHint(GLFW_SAMPLES, 4);
+    } else {
+      this.#noClientAPI = true;
+      glfwWindowHint(GLFW_CLIENT_API, 0);
     }
+
     glfwWindowHint(GLFW_RESIZABLE, options.resizable ? 1 : 0);
     glfwWindowHint(GLFW_VISIBLE, 0);
     glfwWindowHint(GLFW_MAXIMIZED, options.maximized ? 1 : 0);
-    glfwWindowHint(GLFW_SAMPLES, 4);
     glfwWindowHint(GLFW_DECORATED, options.removeDecorations ? 0 : 1);
-    //b63a41d67c1838cb219da4a91892d8bf23801c97
+
     this.#nativeHandle = glfwCreateWindow(
       options.width ?? 800,
       options.height ?? 600,
@@ -517,7 +560,9 @@ export class WindowGlfw extends DwmWindow {
     if (!this.#nativeHandle) {
       throw new Error("Failed to create window");
     }
+
     WINDOWS.set(this.#nativeHandle, this);
+
     glfwSetCursorPosCallback(this.#nativeHandle, cursorPosCallback.pointer);
     glfwSetWindowPosCallback(this.#nativeHandle, windowPosCallback.pointer);
     glfwSetWindowSizeCallback(this.#nativeHandle, windowSizeCallback.pointer);
@@ -706,6 +751,23 @@ export class WindowGlfw extends DwmWindow {
         this.#cursor = null;
       }
     }
+  }
+
+  createSurface(
+    instance: Deno.PointerValue,
+    allocator?: Deno.PointerValue | undefined,
+  ): Deno.PointerValue {
+    const surfaceOut = U64_0;
+    const result = glfwCreateWindowSurface(
+      instance,
+      this.#nativeHandle,
+      allocator ?? 0,
+      new Uint8Array(surfaceOut.buffer),
+    );
+    if (result !== 0) {
+      throw new Error(`Failed to create surface: ${result}`);
+    }
+    return surfaceOut[0] < MAX_SAFE_INT ? Number(surfaceOut[0]) : surfaceOut[0];
   }
 
   #closed = false;

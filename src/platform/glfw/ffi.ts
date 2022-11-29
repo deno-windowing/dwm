@@ -1,7 +1,10 @@
-import {
-  dlopen,
-  FetchOptions,
-} from "https://deno.land/x/plug@1.0.0-rc.3/mod.ts";
+import { cachedir } from "https://deno.land/x/cache@0.2.13/directories.ts";
+import darwin from "https://glfw-binaries.deno.dev/3.4.0/glfw3_darwin.js";
+import darwinAarch64 from "https://glfw-binaries.deno.dev/3.4.0/glfw3_darwin_aarch64.js";
+import windows from "https://glfw-binaries.deno.dev/3.4.0/glfw3_windows.js";
+import linux from "https://glfw-binaries.deno.dev/3.4.0/glfw3_linux.js";
+
+export const GLFW_VERSION = "3.4.0";
 
 const symbols = {
   glfwInit: { parameters: [], result: "i32" },
@@ -259,23 +262,44 @@ const symbols = {
   },
 } as const;
 
-const customPath = Deno.env.get("glfw3");
+const customPath = Deno.env.get("DENO_GLFW_PATH");
 
-const opts: FetchOptions = {
-  name: "glfw3",
-  url: "https://github.com/CarrotzRule123/daybreak/raw/main/dist/",
-};
-
-const mod = customPath
-  ? Deno.dlopen(customPath, symbols)
-  : await dlopen(opts, symbols);
+let mod!: Deno.DynamicLibrary<typeof symbols>;
+if (customPath) {
+  mod = Deno.dlopen(customPath, symbols);
+} else {
+  let bin;
+  if (Deno.build.os === "windows") {
+    bin = windows;
+  } else if (Deno.build.os === "darwin") {
+    if (Deno.build.arch === "aarch64") {
+      bin = darwinAarch64;
+    } else {
+      bin = darwin;
+    }
+  } else if (Deno.build.os === "linux") {
+    bin = linux;
+  } else {
+    throw new Error(`Unsupported OS: ${Deno.build.os} (${Deno.build.arch})`);
+  }
+  const suffix = Deno.build.os === "windows"
+    ? ".dll"
+    : Deno.build.os === "darwin"
+    ? ".dylib"
+    : ".so";
+  const JOIN = Deno.build.os === "windows" ? "\\" : "/";
+  const tmp = `${cachedir()}${JOIN}glfw3_v${
+    GLFW_VERSION.replaceAll(".", "-")
+  }${suffix}`;
+  Deno.writeFileSync(tmp, bin);
+  mod = Deno.dlopen(tmp, symbols);
+  globalThis.addEventListener("unload", () => {
+    mod.close();
+    Deno.removeSync(tmp);
+  });
+}
 
 export const ffi = mod.symbols;
-
-// export const ffi = Deno.dlopen(
-//   "glfw3",
-//   symbols,
-// ).symbols;
 
 export function cstr(str: string) {
   return new TextEncoder().encode(str + "\0");

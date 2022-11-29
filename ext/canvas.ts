@@ -24,7 +24,9 @@ export class WindowCanvas {
   onDraw?: (ctx: CanvasRenderingContext2D) => unknown;
 
   constructor(options: CreateWindowOptions = {}) {
-    this.window = createWindow(options);
+    this.window = createWindow(Object.assign({
+      glVersion: [3, 3],
+    }, options));
     const { width, height } = this.window.framebufferSize;
     this.canvas = createCanvas(width, height, true);
     this.ctx = this.canvas.getContext("2d");
