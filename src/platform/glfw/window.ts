@@ -152,11 +152,11 @@ export function vulkanSupported() {
 
 export function getRequiredInstanceExtensions() {
   const ptr = glfwGetRequiredInstanceExtensions(new Uint8Array(U32_0.buffer));
+  const ptrView = new Deno.UnsafePointerView(ptr);
   const extensions = new Array<string>(U32_0[0]);
   for (let i = 0; i < extensions.length; i++) {
     extensions[i] = Deno.UnsafePointerView.getCString(
-      // deno-lint-ignore no-explicit-any
-      (ptr as any) + (typeof ptr === "number" ? (i * 8) : BigInt(i * 8)),
+      ptrView.getBigUint64(i * 8),
     );
   }
   return extensions;
