@@ -14,10 +14,28 @@ switch (Deno.build.os) {
     throw new Error(`Unsupported platform: ${Deno.build.os}`);
 }
 
-const { Window, pollEvents, getProcAddress, mainloop } = platform;
+const {
+  Window,
+  pollEvents,
+  getProcAddress,
+  mainloop,
+  getInstanceProcAddress,
+  getPhysicalDevicePresentationSupport,
+  getRequiredInstanceExtensions,
+  vulkanSupported,
+} = platform;
 
 export function createWindow(options: CreateWindowOptions) {
   return new Window(options);
 }
 
-export { getProcAddress, mainloop, pollEvents, Window };
+export {
+  getInstanceProcAddress,
+  getPhysicalDevicePresentationSupport,
+  getProcAddress,
+  getRequiredInstanceExtensions,
+  mainloop,
+  pollEvents,
+  vulkanSupported,
+  Window,
+};
