@@ -2,7 +2,7 @@ import {
   Canvas,
   CanvasRenderingContext2D,
   createCanvas,
-} from "https://deno.land/x/skia_canvas@0.3.1/mod.ts";
+} from "https://deno.land/x/skia_canvas@0.4.1/mod.ts";
 
 import {
   createWindow,
@@ -77,4 +77,4 @@ export class WindowCanvas {
 }
 
 export * from "../mod.ts";
-export * from "https://deno.land/x/skia_canvas@0.3.1/mod.ts";
+export * from "https://deno.land/x/skia_canvas@0.4.1/mod.ts";
