@@ -40,22 +40,15 @@ export class WindowCanvas {
       this.#resize(evt.width, evt.height);
     };
 
-    const onRefresh = async (evt: WindowRefreshEvent) => {
-      if (!evt.match(this.window)) return;
-      await this.draw();
-    };
-
     const onClosed = (evt: WindowClosedEvent) => {
       if (!evt.match(this.window)) return;
       removeEventListener("framebuffersize", onFramebuffersize);
       removeEventListener("closed", onClosed);
-      removeEventListener("refresh", onRefresh);
       this.#toDraw = false;
     };
 
     addEventListener("framebuffersize", onFramebuffersize);
     addEventListener("closed", onClosed);
-    addEventListener("refresh", onRefresh);
   }
 
   #resize(width: number, height: number) {
