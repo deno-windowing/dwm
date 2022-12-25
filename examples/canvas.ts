@@ -15,6 +15,8 @@ const win = new WindowCanvas({
   resizable: true,
 });
 
+win.window.setSizeLimits(400, 300, 1600, 1200);
+
 const data = {
   labels: ["January", "February", "March", "April", "May", "June", "July"],
   datasets: [{
@@ -66,8 +68,18 @@ win.onContextLoss = () => {
   chart = new Chart(win.canvas, options);
 };
 
-await mainloop(() => {
-  win.makeContextCurrent();
+addEventListener("click", () => {
+  console.log("click");
+});
+
+addEventListener("dblclick", () => {
+  console.log("dblclick");
+});
+
+win.onDraw = () => {
   chart.render();
-  win.flush();
+};
+
+await mainloop(() => {
+  win.draw();
 });

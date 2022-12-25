@@ -23,6 +23,9 @@ const {
   getPhysicalDevicePresentationSupport,
   getRequiredInstanceExtensions,
   vulkanSupported,
+  Monitor,
+  getMonitors,
+  getPrimaryMonitor,
 } = platform;
 
 export function createWindow(options: CreateWindowOptions) {
@@ -31,10 +34,13 @@ export function createWindow(options: CreateWindowOptions) {
 
 export {
   getInstanceProcAddress,
+  getMonitors,
   getPhysicalDevicePresentationSupport,
+  getPrimaryMonitor,
   getProcAddress,
   getRequiredInstanceExtensions,
   mainloop,
+  Monitor,
   pollEvents,
   vulkanSupported,
   Window,
