@@ -1,4 +1,4 @@
-import { getMonitors, mainloop, WindowCanvas } from "../ext/canvas.ts";
+import { mainloop, WindowCanvas } from "../ext/canvas.ts";
 import {
   Chart,
   registerables,

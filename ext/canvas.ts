@@ -72,7 +72,7 @@ export class WindowCanvas {
 
   async draw() {
     if (!this.#toDraw) return;
-    this.makeContextCurrent();
+    // this.makeContextCurrent();
     if (this.#resizeNextFrame) {
       const [width, height] = this.#resizeNextFrame;
       this.#resizeNextFrame = undefined;

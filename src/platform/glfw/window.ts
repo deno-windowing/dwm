@@ -28,6 +28,7 @@ import {
   GLFW_CONTEXT_VERSION_MAJOR,
   GLFW_CONTEXT_VERSION_MINOR,
   GLFW_DECORATED,
+  GLFW_FLOATING,
   GLFW_FOCUSED,
   GLFW_ICONIFIED,
   GLFW_MAXIMIZED,
@@ -601,6 +602,10 @@ export class WindowGlfw extends DwmWindow {
     } else {
       this.#noClientAPI = true;
       glfwWindowHint(GLFW_CLIENT_API, 0);
+    }
+
+    if (options.floating) {
+      glfwWindowHint(GLFW_FLOATING, 1);
     }
 
     glfwWindowHint(GLFW_RESIZABLE, options.resizable ? 1 : 0);

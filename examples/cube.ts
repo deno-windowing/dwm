@@ -17,7 +17,7 @@ win.window.position = {
   y: monitor.workArea.height - 500,
 };
 
-const ctx = win.canvas.getContext("2d");
+const ctx = win.ctx;
 ctx.fillStyle = "#fff";
 ctx.strokeStyle = "#fff";
 
@@ -42,8 +42,7 @@ for (let i = -step * steps / 2; i < step * steps; i += step) {
   matrix.push(column);
 }
 
-await mainloop(() => {
-  win.makeContextCurrent();
+win.onDraw = (ctx) => {
   ctx.clearRect(0, 0, win.canvas.width, win.canvas.height);
   theta += 3;
   if (theta > 360) {
@@ -115,5 +114,8 @@ await mainloop(() => {
       }
     }
   }
-  win.flush();
+};
+
+await mainloop(() => {
+  win.draw();
 });
