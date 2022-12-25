@@ -28,6 +28,7 @@ const symbols = {
   glfwMakeContextCurrent: {
     parameters: ["pointer"],
     result: "void",
+    callback: true,
   },
   glfwGetProcAddress: {
     parameters: ["buffer"],
@@ -40,6 +41,7 @@ const symbols = {
   glfwSwapBuffers: {
     parameters: ["pointer"],
     result: "void",
+    callback: true,
   },
   glfwSwapInterval: {
     parameters: ["i32"],
@@ -222,6 +224,7 @@ const symbols = {
   glfwSetCursor: {
     parameters: ["pointer", "pointer"],
     result: "void",
+    callback: true,
   },
   glfwCreateStandardCursor: {
     parameters: ["i32"],
@@ -259,6 +262,146 @@ const symbols = {
   glfwCreateWindowSurface: {
     parameters: ["pointer", "pointer", "pointer", "buffer"],
     result: "i32",
+  },
+  glfwGetWin32Adapter: {
+    name: Deno.build.os === "windows" ? "glfwGetWin32Adapter" : "glfwInit",
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  glfwGetWin32Monitor: {
+    name: Deno.build.os === "windows" ? "glfwGetWin32Monitor" : "glfwInit",
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  glfwGetWin32Window: {
+    name: Deno.build.os === "windows" ? "glfwGetWin32Window" : "glfwInit",
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  glfwGetWGLContext: {
+    name: Deno.build.os === "windows" ? "glfwGetWGLContext" : "glfwInit",
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  glfwGetCocoaMonitor: {
+    name: Deno.build.os === "darwin" ? "glfwGetCocoaMonitor" : "glfwInit",
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  glfwGetCocoaWindow: {
+    name: Deno.build.os === "darwin" ? "glfwGetCocoaWindow" : "glfwInit",
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  glfwGetNSGLContext: {
+    name: Deno.build.os === "darwin" ? "glfwGetNSGLContext" : "glfwInit",
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  glfwGetX11Display: {
+    name: Deno.build.os === "linux" ? "glfwGetX11Display" : "glfwInit",
+    parameters: [],
+    result: "pointer",
+  },
+  glfwGetX11Adapter: {
+    name: Deno.build.os === "linux" ? "glfwGetX11Adapter" : "glfwInit",
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  glfwGetX11Monitor: {
+    name: Deno.build.os === "linux" ? "glfwGetX11Monitor" : "glfwInit",
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  glfwGetX11Window: {
+    name: Deno.build.os === "linux" ? "glfwGetX11Window" : "glfwInit",
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  glfwGetGLXContext: {
+    name: Deno.build.os === "linux" ? "glfwGetGLXContext" : "glfwInit",
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  glfwGetGLXWindow: {
+    name: Deno.build.os === "linux" ? "glfwGetGLXWindow" : "glfwInit",
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  glfwGetWaylandDisplay: {
+    name: Deno.build.os === "linux" ? "glfwGetWaylandDisplay" : "glfwInit",
+    parameters: [],
+    result: "pointer",
+  },
+  glfwGetWaylandMonitor: {
+    name: Deno.build.os === "linux" ? "glfwGetWaylandMonitor" : "glfwInit",
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  glfwGetWaylandWindow: {
+    name: Deno.build.os === "linux" ? "glfwGetWaylandWindow" : "glfwInit",
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  glfwGetEGLDisplay: {
+    name: Deno.build.os === "linux" ? "glfwGetEGLDisplay" : "glfwInit",
+    parameters: [],
+    result: "pointer",
+  },
+  glfwGetEGLContext: {
+    name: Deno.build.os === "linux" ? "glfwGetEGLContext" : "glfwInit",
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  glfwGetEGLSurface: {
+    name: Deno.build.os === "linux" ? "glfwGetEGLSurface" : "glfwInit",
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  glfwGetMonitors: {
+    parameters: ["buffer"],
+    result: "pointer",
+  },
+  glfwGetPrimaryMonitor: {
+    parameters: [],
+    result: "pointer",
+  },
+  glfwGetMonitorPos: {
+    parameters: ["pointer", "buffer", "buffer"],
+    result: "void",
+  },
+  glfwGetMonitorWorkarea: {
+    parameters: ["pointer", "buffer", "buffer", "buffer", "buffer"],
+    result: "void",
+  },
+  glfwGetMonitorPhysicalSize: {
+    parameters: ["pointer", "buffer", "buffer"],
+    result: "void",
+  },
+  glfwGetMonitorContentScale: {
+    parameters: ["pointer", "buffer", "buffer"],
+    result: "void",
+  },
+  glfwGetMonitorName: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  glfwGetVideoModes: {
+    parameters: ["pointer", "buffer"],
+    result: "pointer",
+  },
+  glfwGetVideoMode: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  glfwGetWindowMonitor: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  glfwSetWindowMonitor: {
+    parameters: ["pointer", "pointer", "i32", "i32", "i32", "i32", "i32"],
+    result: "void",
+    callback: true,
   },
 } as const;
 

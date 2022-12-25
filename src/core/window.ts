@@ -1,4 +1,5 @@
-import { Position, Size } from "./common.ts";
+import { LTRB, Position, Size } from "./common.ts";
+import { DwmMonitor } from "./monitor.ts";
 
 export interface CreateWindowOptions {
   /**
@@ -121,6 +122,8 @@ export abstract class DwmWindow {
    */
   abstract size: Size;
 
+  abstract readonly frameSize: LTRB;
+
   /**
    * Window's framebuffer size
    */
@@ -155,6 +158,11 @@ export abstract class DwmWindow {
    * Opacity of the window
    */
   abstract opacity: number;
+
+  /**
+   * Window's content scale
+   */
+  abstract readonly contentScale: Position;
 
   /**
    * Whether the window should close
@@ -195,6 +203,38 @@ export abstract class DwmWindow {
     instance: Deno.PointerValue,
     allocator?: Deno.PointerValue,
   ): Deno.PointerValue;
+
+  /**
+   * Get the monitor that the window is on (undefined if not fullscreen)
+   */
+  abstract getMonitor(): DwmMonitor | undefined;
+
+  /**
+   * Set the monitor that the window is on
+   */
+  abstract setMonitor(
+    monitor: DwmMonitor | undefined,
+    xpos?: number,
+    ypos?: number,
+    width?: number,
+    height?: number,
+    refreshRate?: number,
+  ): void;
+
+  /**
+   * Set the window's aspect ratio
+   */
+  abstract setAspectRatio(numerator: number, denominator: number): void;
+
+  /**
+   * Set the window's size limits
+   */
+  abstract setSizeLimits(
+    minWidth: number,
+    minHeight: number,
+    maxWidth: number,
+    maxHeight: number,
+  ): void;
 
   /**
    * Check if the window is closed

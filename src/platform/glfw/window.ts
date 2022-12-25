@@ -17,6 +17,7 @@ import {
   WindowResizeEvent,
   WindowScrollEvent,
 } from "../../core/event.ts";
+import { DwmMonitor } from "../../core/monitor.ts";
 import {
   CreateWindowOptions,
   CursorIcon,
@@ -27,7 +28,6 @@ import {
   GLFW_CONTEXT_VERSION_MAJOR,
   GLFW_CONTEXT_VERSION_MINOR,
   GLFW_DECORATED,
-  GLFW_FLOATING,
   GLFW_FOCUSED,
   GLFW_ICONIFIED,
   GLFW_MAXIMIZED,
@@ -42,6 +42,7 @@ import {
   GLFW_VISIBLE,
 } from "./constants.ts";
 import { cstr, ffi } from "./ffi.ts";
+import { MonitorGlfw } from "./monitor.ts";
 import SCANCODE_WIN from "./scancode_win.json" assert { type: "json" };
 
 const {
@@ -72,15 +73,14 @@ const {
   glfwMaximizeWindow,
   glfwSetCursorPosCallback,
   glfwSetWindowCloseCallback,
-  // glfwSetWindowSizeLimits,
+  glfwSetWindowSizeLimits,
   glfwSetWindowFocusCallback,
   glfwSetWindowSizeCallback,
-  // glfwRequestWindowAttention,
-  // glfwGetWindowContentScale,
-  // glfwGetWindowFrameSize,
+  glfwGetWindowContentScale,
+  glfwGetWindowFrameSize,
   glfwGetWindowOpacity,
   glfwSetFramebufferSizeCallback,
-  // glfwSetWindowAspectRatio,
+  glfwSetWindowAspectRatio,
   // glfwSetWindowAttrib,
   // glfwSetWindowContentScaleCallback,
   // glfwSetWindowIcon,
@@ -105,6 +105,8 @@ const {
   glfwGetPhysicalDevicePresentationSupport,
   glfwCreateWindowSurface,
   glfwGetInstanceProcAddress,
+  glfwGetWindowMonitor,
+  glfwSetWindowMonitor,
 } = ffi;
 
 if (!glfwInit()) {
@@ -133,6 +135,10 @@ const U32_0 = new Uint32Array(1);
 const U64_0 = new BigUint64Array(1);
 const I32_0 = new Int32Array(1);
 const I32_1 = new Int32Array(1);
+const I32_2 = new Int32Array(1);
+const I32_3 = new Int32Array(1);
+const F32_0 = new Float32Array(1);
+const F32_1 = new Float32Array(1);
 
 export function pollEvents(wait = false) {
   if (wait) {
@@ -469,6 +475,53 @@ const mouseButtonCallback = new Deno.UnsafeCallback(
           (mods & 0x0001) !== 0,
         ),
       );
+      if (!action) {
+        dispatchEvent(
+          new WindowMouseEvent(
+            "click",
+            window,
+            (mods & 0x0004) !== 0,
+            button,
+            button,
+            x,
+            y,
+            (mods & 0x0002) !== 0,
+            (mods & 0x0008) !== 0,
+            0,
+            0,
+            0,
+            x,
+            y,
+            (mods & 0x0001) !== 0,
+          ),
+        );
+        const now = performance.now();
+        const lastClick = window._inputState.lastClick;
+        if (lastClick && (now - lastClick) < 500) {
+          dispatchEvent(
+            new WindowMouseEvent(
+              "dblclick",
+              window,
+              (mods & 0x0004) !== 0,
+              button,
+              button,
+              x,
+              y,
+              (mods & 0x0002) !== 0,
+              (mods & 0x0008) !== 0,
+              0,
+              0,
+              0,
+              x,
+              y,
+              (mods & 0x0001) !== 0,
+            ),
+          );
+          window._inputState.lastClick = 0;
+        } else {
+          window._inputState.lastClick = now;
+        }
+      }
     }
   },
 );
@@ -537,8 +590,12 @@ export class WindowGlfw extends DwmWindow {
         GLFW_CLIENT_API,
         options.gles ? GLFW_OPENGL_ES_API : GLFW_OPENGL_API,
       );
-      glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, 1);
-      glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+      if (options.glVersion[0] >= 3 && options.glVersion[1] >= 0) {
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, 1);
+      }
+      if (options.glVersion[0] >= 3 && options.glVersion[1] >= 2) {
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+      }
       glfwWindowHint(GLFW_SAMPLES, 4);
       this.#noClientAPI = false;
     } else {
@@ -697,6 +754,21 @@ export class WindowGlfw extends DwmWindow {
     glfwSetWindowSize(this.#nativeHandle, value.width, value.height);
   }
 
+  get frameSize() {
+    glfwGetWindowFrameSize(this.#nativeHandle, I32_0, I32_1, I32_2, I32_3);
+    return {
+      left: I32_0[0],
+      top: I32_1[0],
+      right: I32_2[0],
+      bottom: I32_3[0],
+    };
+  }
+
+  get contentScale() {
+    glfwGetWindowContentScale(this.#nativeHandle, F32_0, F32_1);
+    return { x: F32_0[0], y: F32_1[0] };
+  }
+
   get framebufferSize() {
     glfwGetFramebufferSize(this.#nativeHandle, I32_0, I32_1);
     return { width: I32_0[0], height: I32_1[0] };
@@ -725,6 +797,10 @@ export class WindowGlfw extends DwmWindow {
 
   swapBuffers() {
     glfwSwapBuffers(this.#nativeHandle);
+  }
+
+  setAspectRatio(numerator: number, denominator: number) {
+    glfwSetWindowAspectRatio(this.#nativeHandle, numerator, denominator);
   }
 
   #cursor: Deno.PointerValue | null = null;
@@ -770,6 +846,57 @@ export class WindowGlfw extends DwmWindow {
       throw new Error(`Failed to create surface: ${result}`);
     }
     return surfaceOut[0] < MAX_SAFE_INT ? Number(surfaceOut[0]) : surfaceOut[0];
+  }
+
+  getMonitor(): DwmMonitor | undefined {
+    const monitor = glfwGetWindowMonitor(this.#nativeHandle);
+    return monitor ? new MonitorGlfw(monitor) : undefined;
+  }
+
+  setMonitor(
+    monitor?: DwmMonitor,
+    x?: number,
+    y?: number,
+    width?: number,
+    height?: number,
+    refreshRate?: number,
+  ) {
+    if (monitor) {
+      glfwSetWindowMonitor(
+        this.#nativeHandle,
+        monitor.nativeHandle,
+        x ?? 0,
+        y ?? 0,
+        width ?? 0,
+        height ?? 0,
+        refreshRate ?? -1,
+      );
+    } else {
+      glfwSetWindowMonitor(
+        this.#nativeHandle,
+        0,
+        x ?? 0,
+        y ?? 0,
+        width ?? 0,
+        height ?? 0,
+        refreshRate ?? -1,
+      );
+    }
+  }
+
+  setSizeLimits(
+    minWidth: number,
+    minHeight: number,
+    maxWidth: number,
+    maxHeight: number,
+  ) {
+    glfwSetWindowSizeLimits(
+      this.#nativeHandle,
+      minWidth,
+      minHeight,
+      maxWidth,
+      maxHeight,
+    );
   }
 
   #closed = false;

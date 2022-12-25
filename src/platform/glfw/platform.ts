@@ -9,6 +9,11 @@ import {
   vulkanSupported,
   WindowGlfw as Window,
 } from "./window.ts";
+import {
+  getMonitors,
+  getPrimaryMonitor,
+  MonitorGlfw as Monitor,
+} from "./monitor.ts";
 
 export default <Platform> {
   Window,
@@ -19,4 +24,7 @@ export default <Platform> {
   getRequiredInstanceExtensions,
   getInstanceProcAddress,
   getPhysicalDevicePresentationSupport,
+  Monitor,
+  getMonitors,
+  getPrimaryMonitor,
 };

@@ -1,3 +1,4 @@
+import { DwmMonitor } from "./monitor.ts";
 import { CreateWindowOptions, DwmWindow } from "./window.ts";
 
 export interface Platform {
@@ -7,6 +8,21 @@ export interface Platform {
   readonly Window: {
     new (options: CreateWindowOptions): DwmWindow;
   } & typeof DwmWindow;
+
+  /**
+   * Platform's monitor class
+   */
+  readonly Monitor: typeof DwmMonitor;
+
+  /**
+   * Gets list of monitors.
+   */
+  getMonitors(): DwmMonitor[];
+
+  /**
+   * Gets primary monitor.
+   */
+  getPrimaryMonitor(): DwmMonitor;
 
   /**
    * Poll events.

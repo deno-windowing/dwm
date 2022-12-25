@@ -1,4 +1,6 @@
-import { mainloop, WindowCanvas } from "../ext/canvas.ts";
+import { getPrimaryMonitor, mainloop, WindowCanvas } from "../ext/canvas.ts";
+
+const monitor = getPrimaryMonitor();
 
 const win = new WindowCanvas({
   title: "Skia Canvas",
@@ -10,7 +12,10 @@ const win = new WindowCanvas({
   floating: true,
 });
 
-win.window.position = { x: 300, y: 300 };
+win.window.position = {
+  x: monitor.workArea.width - 500,
+  y: monitor.workArea.height - 500,
+};
 
 const ctx = win.canvas.getContext("2d");
 ctx.fillStyle = "#fff";

@@ -23,6 +23,8 @@ export class WindowCanvas {
   onContextLoss?: () => void;
   onDraw?: (ctx: CanvasRenderingContext2D) => unknown;
 
+  #resizeNextFrame?: [number, number];
+
   constructor(options: CreateWindowOptions = {}) {
     this.window = createWindow(Object.assign({
       glVersion: [3, 3],
@@ -37,7 +39,7 @@ export class WindowCanvas {
         this.#toDraw = false;
         return;
       }
-      this.#resize(evt.width, evt.height);
+      this.#resizeNextFrame = [evt.width, evt.height];
     };
 
     const onClosed = (evt: WindowClosedEvent) => {
@@ -71,10 +73,17 @@ export class WindowCanvas {
   async draw() {
     if (!this.#toDraw) return;
     this.makeContextCurrent();
+    if (this.#resizeNextFrame) {
+      const [width, height] = this.#resizeNextFrame;
+      this.#resizeNextFrame = undefined;
+      this.#resize(width, height);
+    }
     await this.onDraw?.(this.ctx);
     this.flush();
   }
 }
 
 export * from "../mod.ts";
+// deno-lint-ignore ban-ts-comment
+// @ts-expect-error
 export * from "https://deno.land/x/skia_canvas@0.4.1/mod.ts";

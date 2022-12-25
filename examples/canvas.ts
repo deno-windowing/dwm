@@ -1,4 +1,4 @@
-import { mainloop, WindowCanvas } from "../ext/canvas.ts";
+import { getMonitors, mainloop, WindowCanvas } from "../ext/canvas.ts";
 import {
   Chart,
   registerables,
@@ -14,6 +14,8 @@ const win = new WindowCanvas({
   height: 600,
   resizable: true,
 });
+
+win.window.setSizeLimits(400, 300, 1600, 1200);
 
 const data = {
   labels: ["January", "February", "March", "April", "May", "June", "July"],
@@ -66,8 +68,18 @@ win.onContextLoss = () => {
   chart = new Chart(win.canvas, options);
 };
 
-await mainloop(() => {
-  win.makeContextCurrent();
+addEventListener("click", () => {
+  console.log("click");
+});
+
+addEventListener("dblclick", () => {
+  console.log("dblclick");
+});
+
+win.onDraw = () => {
   chart.render();
-  win.flush();
+};
+
+await mainloop(() => {
+  win.draw();
 });
