@@ -585,6 +585,18 @@ export class WindowGlfw extends DwmWindow {
   constructor(options: CreateWindowOptions = {}) {
     super(options);
     if (options.glVersion) {
+      if (typeof options.glVersion === "string") {
+        try {
+          const [_str, major, minor] = options.glVersion.match(
+            /^v?(?<major>\d+)\.(?<minor>\d+)\.?(?<patch>\d+)?$/,
+          )!;
+          options.glVersion = [Number(major), Number(minor)];
+        } catch (e) {
+          throw new Error(
+            `Could not determine the gl version from ${options.glVersion}`,
+          );
+        }
+      }
       glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, options.glVersion[0]);
       glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, options.glVersion[1]);
       glfwWindowHint(

@@ -10,7 +10,7 @@ const window = createWindow({
   width: 800,
   height: 600,
   resizable: true,
-  glVersion: [1, 1],
+  glVersion: "v1.1",
 });
 
 function draw() {

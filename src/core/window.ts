@@ -52,7 +52,7 @@ export interface CreateWindowOptions {
   /**
    * Which GL version to use
    */
-  glVersion?: [number, number];
+  glVersion?: [number, number] | string;
 
   /**
    * Should GLES be used (only for OpenGL)

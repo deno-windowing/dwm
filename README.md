@@ -19,7 +19,7 @@ const win = createWindow({
   height: 600,
   resizable: true,
   // To create OpenGL context, set the version:
-  glVersion: [3, 3],
+  glVersion: "v3.3",
   // By default, no Client API is used.
 });
 
@@ -52,15 +52,19 @@ For drawing, you can use:
   `ext/canvas.ts` for an easy to use wrapper)
 - [Deno Vulkan](https://github.com/deno-windowing/vulkan)
 
+To package your application you can use:
+
+- [wpack](https://github.com/deno-windowing/wpack)
+
 See [examples](./examples).
 
 ## Usage
 
 Since this module depends on unstable FFI API, you need to pass `--unstable`
-along with `--allow-ffi`.
+along with `--allow-ffi`, `--allow-write` and `--allow-env`.
 
 ```sh
-deno run --unstable --allow-ffi <file>
+deno run --unstable --allow-ffi --allow-write --allow-env <file>
 ```
 
 ## Maintainers
@@ -72,4 +76,4 @@ deno run --unstable --allow-ffi <file>
 
 [Apache-2.0](./LICENSE) licensed.
 
-Copyright 2022 © The Deno Windowing Team
+Copyright 2023 © The Deno Windowing Team
