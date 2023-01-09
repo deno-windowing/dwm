@@ -1,9 +1,13 @@
 {
   "tasks": {
-    "test": "deno run -A --unstable test.ts",
     "example_opengl": "deno run -A --unstable examples/opengl.ts",
-    "example_child_window": "deno run -A --unstable examples/child-window.ts",
-    "example": "deno run -A --unstable examples/window.ts"
+    "example_cube": "deno run -A --unstable examples/cube.ts",
+    "example_cursor": "deno run -A --unstable examples/cursor.ts",
+    "example_canvas": "deno run -A --unstable examples/cube.ts",
+    "example_events": "deno run -A --unstable examples/events.ts",
+    "example_multi_window": "deno run -A --unstable examples/multi-window.ts",
+    "example_transparent": "deno run -A --unstable examples/transparent.ts",
+    "example_window": "deno run -A --unstable examples/window.ts"
   },
 
   "lint": {
