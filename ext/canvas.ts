@@ -2,7 +2,7 @@ import {
   Canvas,
   CanvasRenderingContext2D,
   createCanvas,
-} from "https://deno.land/x/skia_canvas@0.4.1/mod.ts";
+} from "https://deno.land/x/skia_canvas@0.5.0/mod.ts";
 
 import {
   createWindow,
