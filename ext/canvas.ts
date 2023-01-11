@@ -86,4 +86,4 @@ export class WindowCanvas {
 export * from "../mod.ts";
 // deno-lint-ignore ban-ts-comment
 // @ts-expect-error
-export * from "https://deno.land/x/skia_canvas@0.4.1/mod.ts";
+export * from "https://deno.land/x/skia_canvas@0.5.0/mod.ts";
