@@ -411,20 +411,6 @@ let mod!: Deno.DynamicLibrary<typeof symbols>;
 if (customPath) {
   mod = Deno.dlopen(customPath, symbols);
 } else {
-  let bin;
-  if (Deno.build.os === "windows") {
-    bin = windows;
-  } else if (Deno.build.os === "darwin") {
-    if (Deno.build.arch === "aarch64") {
-      bin = darwinAarch64;
-    } else {
-      bin = darwin;
-    }
-  } else if (Deno.build.os === "linux") {
-    bin = linux;
-  } else {
-    throw new Error(`Unsupported OS: ${Deno.build.os} (${Deno.build.arch})`);
-  }
   const suffix = Deno.build.os === "windows"
     ? ".dll"
     : Deno.build.os === "darwin"
@@ -434,7 +420,26 @@ if (customPath) {
   const tmp = `${cachedir()}${JOIN}glfw3_v${
     GLFW_VERSION.replaceAll(".", "-")
   }${suffix}`;
-  Deno.writeFileSync(tmp, bin);
+  try {
+    Deno.statSync(tmp);
+  } catch (error) {
+    if (!(error instanceof Deno.errors.NotFound)) throw error;
+    let bin;
+    if (Deno.build.os === "windows") {
+      bin = windows;
+    } else if (Deno.build.os === "darwin") {
+      if (Deno.build.arch === "aarch64") {
+        bin = darwinAarch64;
+      } else {
+        bin = darwin;
+      }
+    } else if (Deno.build.os === "linux") {
+      bin = linux;
+    } else {
+      throw new Error(`Unsupported OS: ${Deno.build.os} (${Deno.build.arch})`);
+    }
+    Deno.writeFileSync(tmp, bin);
+  }
   mod = Deno.dlopen(tmp, symbols);
   globalThis.addEventListener("unload", () => {
     mod.close();
