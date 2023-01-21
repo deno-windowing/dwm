@@ -22,25 +22,42 @@ import {
   CreateWindowOptions,
   CursorIcon,
   DwmWindow,
+  InputMode,
+  InputModeValue,
 } from "../../core/window.ts";
 import {
+  GLFW_ARROW_CURSOR,
   GLFW_CLIENT_API,
   GLFW_CONTEXT_VERSION_MAJOR,
   GLFW_CONTEXT_VERSION_MINOR,
+  GLFW_CROSSHAIR_CURSOR,
+  GLFW_CURSOR,
+  GLFW_CURSOR_DISABLED,
+  GLFW_CURSOR_HIDDEN,
+  GLFW_CURSOR_NORMAL,
   GLFW_DECORATED,
   GLFW_FLOATING,
   GLFW_FOCUSED,
+  GLFW_HAND_CURSOR,
+  GLFW_HRESIZE_CURSOR,
+  GLFW_IBEAM_CURSOR,
   GLFW_ICONIFIED,
+  GLFW_LOCK_KEY_MODS,
   GLFW_MAXIMIZED,
   GLFW_OPENGL_API,
   GLFW_OPENGL_CORE_PROFILE,
   GLFW_OPENGL_ES_API,
   GLFW_OPENGL_FORWARD_COMPAT,
   GLFW_OPENGL_PROFILE,
+  GLFW_RAW_MOUSE_MOTION,
   GLFW_RESIZABLE,
   GLFW_SAMPLES,
+  GLFW_STICKY_KEYS,
+  GLFW_STICKY_MOUSE_BUTTONS,
   GLFW_TRANSPARENT_FRAMEBUFFER,
+  GLFW_TRUE,
   GLFW_VISIBLE,
+  GLFW_VRESIZE_CURSOR,
 } from "./constants.ts";
 import { cstr, ffi } from "./ffi.ts";
 import { MonitorGlfw } from "./monitor.ts";
@@ -108,6 +125,11 @@ const {
   glfwGetInstanceProcAddress,
   glfwGetWindowMonitor,
   glfwSetWindowMonitor,
+  glfwSetInputMode,
+  glfwGetInputMode,
+  glfwRawMouseMotionSupported,
+  glfwSetCursorPos,
+  glfwCreateCursor,
 } = ffi;
 
 if (!glfwInit()) {
@@ -826,12 +848,12 @@ export class WindowGlfw extends DwmWindow {
     if (icon) {
       const cursor = glfwCreateStandardCursor(
         {
-          arrow: 0x00036001,
-          ibeam: 0x00036002,
-          crosshair: 0x00036003,
-          hand: 0x00036004,
-          hresize: 0x00036005,
-          vresize: 0x00036006,
+          arrow: GLFW_ARROW_CURSOR,
+          ibeam: GLFW_IBEAM_CURSOR,
+          crosshair: GLFW_CROSSHAIR_CURSOR,
+          hand: GLFW_HAND_CURSOR,
+          hresize: GLFW_HRESIZE_CURSOR,
+          vresize: GLFW_VRESIZE_CURSOR,
         }[icon],
       );
       glfwSetCursor(this.#nativeHandle, cursor);
@@ -847,7 +869,25 @@ export class WindowGlfw extends DwmWindow {
       }
     }
   }
+  setCustomCursor(image: Uint8Array, hotspot: Size, position: Position) {
+    const stringptr = Deno.UnsafePointer.of(image);
+    const struct = new Uint8Array(16);
+    const structview = new DataView(struct.buffer);
+    structview.setInt32(0, hotspot.width, true);
+    structview.setInt32(4, hotspot.width, true);
+    structview.setBigInt64(8, BigInt(stringptr), true);
 
+    const cursor = glfwCreateCursor(
+      struct,
+      position.x,
+      position.y,
+    );
+    glfwSetCursor(this.#nativeHandle, cursor);
+    if (this.#cursor) {
+      glfwDestroyCursor(this.#cursor);
+    }
+    this.#cursor = cursor;
+  }
   createSurface(
     instance: Deno.PointerValue,
     allocator?: Deno.PointerValue | undefined,
@@ -921,7 +961,59 @@ export class WindowGlfw extends DwmWindow {
   get closed() {
     return this.#closed;
   }
-
+  setInputMode(mode: InputMode, value: InputModeValue | boolean) {
+    glfwSetInputMode(
+      this.#nativeHandle,
+      {
+        cursor: GLFW_CURSOR,
+        cursorDisabled: GLFW_CURSOR_DISABLED,
+        cursorHidden: GLFW_CURSOR_HIDDEN,
+        stickyKeys: GLFW_STICKY_KEYS,
+        stickyMouseButtons: GLFW_STICKY_MOUSE_BUTTONS,
+        lockKeyMods: GLFW_LOCK_KEY_MODS,
+        rawMouseMotion: GLFW_RAW_MOUSE_MOTION,
+      }[mode],
+      typeof (value) === "boolean" ? value ? 1 : 0 : {
+        normal: GLFW_CURSOR_NORMAL,
+        hidden: GLFW_CURSOR_HIDDEN,
+        disabled: GLFW_CURSOR_DISABLED,
+      }[value],
+    );
+  }
+  getInputMode(mode: InputMode): InputModeValue {
+    const inputModeraw = glfwGetInputMode(
+      this.#nativeHandle,
+      {
+        cursor: GLFW_CURSOR,
+        cursorDisabled: GLFW_CURSOR_DISABLED,
+        cursorHidden: GLFW_CURSOR_HIDDEN,
+        stickyKeys: GLFW_STICKY_KEYS,
+        stickyMouseButtons: GLFW_STICKY_MOUSE_BUTTONS,
+        lockKeyMods: GLFW_LOCK_KEY_MODS,
+        rawMouseMotion: GLFW_RAW_MOUSE_MOTION,
+      }[mode],
+    );
+    switch (inputModeraw) {
+      case GLFW_CURSOR_DISABLED:
+        return "disabled";
+      case GLFW_CURSOR_HIDDEN:
+        return "hidden";
+      case GLFW_CURSOR_NORMAL:
+        return "normal";
+      default:
+        return "normal";
+    }
+  }
+  rawMouseMotionSupported() {
+    if (glfwRawMouseMotionSupported()) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  setCursorPos(x: number, y: number) {
+    glfwSetCursorPos(this.#nativeHandle, x, y);
+  }
   close() {
     this.#closed = true;
     dispatchEvent(new WindowClosedEvent(this));
