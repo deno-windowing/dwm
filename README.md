@@ -10,40 +10,73 @@ Cross-platform window management library for Deno.
 
 ## Example
 
-```ts
-import { createWindow, mainloop } from "https://deno.land/x/dwm@0.3.0/mod.ts";
+### Creating an OpenGL Window
 
-const win = createWindow({
-  title: "Hello World",
+```ts
+import {
+  createWindow,
+  getProcAddress,
+  mainloop,
+} from "https://deno.land/x/dwm@0.3.0/mod.ts";
+import * as gl from "https://deno.land/x/gluten@0.1.3/api/gles23.2.ts";
+
+const window = createWindow({
+  title: "DenoGL",
   width: 800,
   height: 600,
   resizable: true,
-  // To create OpenGL context, set the version:
-  glVersion: "v3.3",
-  // By default, no Client API is used.
+  glVersion: "v3.2",
+  gles: true,
 });
 
-// For OpenGL:
-// By default, context is made current when window is created
-// You can also make it current manually
-win.makeContextCurrent();
-
-// You can also create Vulkan Surface using:
-const surfaceKHR = win.createSurface(instancePointer);
-
-// Many DOM events are supported, such as:
+gl.load(getProcAddress);
 
 addEventListener("resize", (event) => {
-  console.log("Window resized", event.width, event.height);
+  gl.Viewport(0, 0, event.width, event.height);
 });
+
+gl.ClearColor(0.0, 0.0, 0.0, 1.0);
+
+function frame() {
+  gl.Clear(gl.COLOR_BUFFER_BIT);
+  window.swapBuffers();
+}
+
+await mainloop(frame);
+```
+
+### Creating a Skia Canvas Window
+
+```ts
+import {
+  mainloop,
+  WindowCanvas,
+} from "https://deno.land/x/dwm@0.3.0/ext/canvas.ts";
+
+const canvas = new WindowCanvas({
+  title: "Skia Canvas",
+  width: 800,
+  height: 600,
+  resizable: true,
+});
+
+canvas.onDraw = (ctx) => {
+  ctx.fillStyle = "black";
+  ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  ctx.fillStyle = "white";
+  ctx.font = "30px Arial";
+  ctx.textBaseline = "top";
+  ctx.fillText("Hello World", 10, 10);
+};
 
 await mainloop(() => {
-  // drawing logic ...
-
-  // For OpenGL, you have to call this:
-  win.swapBuffers();
+  canvas.draw();
 });
 ```
+
+See [examples](./examples) for more examples!
+
+## Usage
 
 For drawing, you can use:
 
@@ -55,10 +88,6 @@ For drawing, you can use:
 To package your application you can use:
 
 - [wpack](https://github.com/deno-windowing/wpack)
-
-See [examples](./examples).
-
-## Usage
 
 Since this module depends on unstable FFI API, you need to pass `--unstable`
 along with `--allow-ffi`, `--allow-write` and `--allow-env`.

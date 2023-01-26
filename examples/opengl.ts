@@ -1,30 +1,26 @@
-import { createWindow, mainloop } from "../mod.ts";
-import * as GL from "https://win32.deno.dev/main/Graphics.OpenGL";
-
-addEventListener("resize", (event) => {
-  GL.glViewport(0, 0, event.width, event.height);
-});
+import { createWindow, getProcAddress, mainloop } from "../mod.ts";
+import * as gl from "https://deno.land/x/gluten@0.1.3/api/gles23.2.ts";
 
 const window = createWindow({
-  title: "Deno DWM OpenGL",
+  title: "DenoGL",
   width: 800,
   height: 600,
   resizable: true,
-  glVersion: "v1.1",
+  glVersion: "v3.2",
+  gles: true,
 });
 
-function draw() {
-  GL.glClear(GL.GL_COLOR_BUFFER_BIT);
-  GL.glBegin(GL.GL_TRIANGLES);
-  GL.glColor3f(1.0, 0.0, 0.0);
-  GL.glVertex2i(0, 1);
-  GL.glColor3f(0.0, 1.0, 0.0);
-  GL.glVertex2i(-1, -1);
-  GL.glColor3f(0.0, 0.0, 1.0);
-  GL.glVertex2i(1, -1);
-  GL.glEnd();
-  GL.glFlush();
+gl.load(getProcAddress);
+
+addEventListener("resize", (event) => {
+  gl.Viewport(0, 0, event.width, event.height);
+});
+
+gl.ClearColor(0.0, 0.0, 0.0, 1.0);
+
+function frame() {
+  gl.Clear(gl.COLOR_BUFFER_BIT);
   window.swapBuffers();
 }
 
-await mainloop(draw);
+await mainloop(frame);
