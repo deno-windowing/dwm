@@ -1,7 +1,7 @@
 # Deno Window Manager
 
 [![Tags](https://img.shields.io/github/release/deno-windowing/dwm)](https://github.com/deno-windowing/dwm/releases)
-[![Doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/dwm@0.2.1/mod.ts)
+[![Doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/dwm@0.3.0/mod.ts)
 [![Checks](https://github.com/deno-windowing/dwm/actions/workflows/ci.yml/badge.svg)](https://github.com/deno-windowing/dwm/actions/workflows/ci.yml)
 [![License](https://img.shields.io/github/license/deno-windowing/dwm)](https://github.com/deno-windowing/dwm/blob/master/LICENSE)
 [![Sponsor](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/DjDeveloperr)
@@ -11,7 +11,7 @@ Cross-platform window management library for Deno.
 ## Example
 
 ```ts
-import { createWindow, mainloop } from "https://deno.land/x/dwm@0.2.1/mod.ts";
+import { createWindow, mainloop } from "https://deno.land/x/dwm@0.3.0/mod.ts";
 
 const win = createWindow({
   title: "Hello World",
