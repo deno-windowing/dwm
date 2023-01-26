@@ -403,6 +403,26 @@ const symbols = {
     result: "void",
     callback: true,
   },
+  glfwSetInputMode: {
+    name: "glfwSetInputMode",
+    parameters: ["pointer", "i32", "i32"],
+    result: "void",
+  },
+  glfwGetInputMode: {
+    name: "glfwGetInputMode",
+    parameters: ["pointer", "i32"],
+    result: "i32",
+  },
+  glfwRawMouseMotionSupported: {
+    name: "glfwRawMouseMotionSupported",
+    parameters: [],
+    result: "i32",
+  },
+  glfwSetCursorPos: {
+    name: "glfwSetCursorPos",
+    parameters: ["pointer", "f64", "f64"],
+    result: "void",
+  },
 } as const;
 
 const customPath = Deno.env.get("DENO_GLFW_PATH");

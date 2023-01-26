@@ -93,6 +93,16 @@ export type CursorIcon =
   | "hresize"
   | "vresize";
 
+export type InputMode =
+  | "cursor"
+  | "cursorDisabled"
+  | "cursorHidden"
+  | "stickyKeys"
+  | "stickyMouseButtons"
+  | "lockKeyMods"
+  | "rawMouseMotion";
+
+export type InputModeValue = "normal" | "hidden" | "disabled";
 /**
  * Represents a Window
  */
@@ -235,7 +245,26 @@ export abstract class DwmWindow {
     maxWidth: number,
     maxHeight: number,
   ): void;
+  /**
+   * Set the window's input mode
+   */
+  abstract setInputMode(mode: InputMode, value: InputModeValue | boolean): void;
+  /**
+   * Get the window's input mode
+   */
+  abstract getInputMode(mode: InputMode): InputModeValue;
+  /**
+   * Check if the window has raw mouse motion
+   */
+  abstract rawMouseMotionSupported(): boolean;
 
+  abstract setCursorPos(xpos: number, ypos: number): void;
+
+  abstract setCustomCursor(
+    image: Uint8Array,
+    hotspot: Size,
+    position: Position,
+  ): void;
   /**
    * Check if the window is closed
    */

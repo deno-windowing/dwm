@@ -7,7 +7,9 @@
     "example_events": "deno run -A --unstable examples/events.ts",
     "example_multi_window": "deno run -A --unstable examples/multi-window.ts",
     "example_transparent": "deno run -A --unstable examples/transparent.ts",
-    "example_window": "deno run -A --unstable examples/window.ts"
+    "example_window": "deno run -A --unstable examples/window.ts",
+    "example_capture": "deno run -A --unstable examples/mouse-capture.ts",
+    "example_imagecursor": "deno run -A --unstable examples/custom-cursor.ts"
   },
 
   "lint": {
