@@ -75,7 +75,7 @@ const symbols = {
     callback: true,
   },
   glfwSetWindowIcon: {
-    parameters: ["pointer", "i32", "pointer"],
+    parameters: ["pointer", "i32", "buffer"],
     result: "void",
     callback: true,
   },

@@ -1,4 +1,4 @@
-import { Position, Size } from "../../core/common.ts";
+import { ImageStruct, Position, Size } from "../../core/common.ts";
 import {
   animationFrames,
   EventLoop,
@@ -101,7 +101,7 @@ const {
   glfwSetWindowAspectRatio,
   // glfwSetWindowAttrib,
   // glfwSetWindowContentScaleCallback,
-  // glfwSetWindowIcon,
+  glfwSetWindowIcon,
   glfwSetWindowIconifyCallback,
   glfwSetWindowMaximizeCallback,
   glfwSetWindowOpacity,
@@ -592,7 +592,8 @@ export class WindowGlfw extends DwmWindow {
   #title = "";
   #counted = false;
   #noClientAPI = false;
-
+  #cursor: Deno.PointerValue | null = null;
+  #closed = false;
   // deno-lint-ignore no-explicit-any
   _inputState: Record<string, any> = {};
 
@@ -842,8 +843,6 @@ export class WindowGlfw extends DwmWindow {
     glfwSetWindowAspectRatio(this.#nativeHandle, numerator, denominator);
   }
 
-  #cursor: Deno.PointerValue | null = null;
-
   setCursor(icon?: CursorIcon | undefined) {
     if (icon) {
       const cursor = glfwCreateStandardCursor(
@@ -869,6 +868,7 @@ export class WindowGlfw extends DwmWindow {
       }
     }
   }
+
   setCustomCursor(image: Uint8Array, hotspot: Size, position: Position) {
     const stringptr = Deno.UnsafePointer.of(image);
     const struct = new Uint8Array(16);
@@ -888,6 +888,23 @@ export class WindowGlfw extends DwmWindow {
     }
     this.#cursor = cursor;
   }
+
+  setIcon(image: ImageStruct): void;
+  setIcon(image: Uint8Array, size: Size): void;
+  setIcon(...args: [ImageStruct] | [Uint8Array, Size]) {
+    const image = args.length === 1
+      ? args[0]
+      : { image: args[0], width: args[1].width, height: args[1].height };
+
+    const stringptr = Deno.UnsafePointer.of(image.image);
+    const struct = new Uint8Array(16);
+    const structview = new DataView(struct.buffer);
+    structview.setInt32(0, image.width, true);
+    structview.setInt32(4, image.width, true);
+    structview.setBigInt64(8, BigInt(stringptr), true);
+    glfwSetWindowIcon(this.#nativeHandle, 1, structview);
+  }
+
   createSurface(
     instance: Deno.PointerValue,
     allocator?: Deno.PointerValue | undefined,
@@ -956,11 +973,10 @@ export class WindowGlfw extends DwmWindow {
     );
   }
 
-  #closed = false;
-
   get closed() {
     return this.#closed;
   }
+
   setInputMode(mode: InputMode, value: InputModeValue | boolean) {
     glfwSetInputMode(
       this.#nativeHandle,
@@ -980,6 +996,7 @@ export class WindowGlfw extends DwmWindow {
       }[value],
     );
   }
+
   getInputMode(mode: InputMode): InputModeValue {
     const inputModeraw = glfwGetInputMode(
       this.#nativeHandle,
@@ -1004,16 +1021,15 @@ export class WindowGlfw extends DwmWindow {
         return "normal";
     }
   }
+
   rawMouseMotionSupported() {
-    if (glfwRawMouseMotionSupported()) {
-      return true;
-    } else {
-      return false;
-    }
+    return glfwRawMouseMotionSupported() ? true : false;
   }
+
   setCursorPos(x: number, y: number) {
     glfwSetCursorPos(this.#nativeHandle, x, y);
   }
+
   close() {
     this.#closed = true;
     dispatchEvent(new WindowClosedEvent(this));

@@ -1,4 +1,4 @@
-import { LTRB, Position, Size } from "./common.ts";
+import { ImageStruct, LTRB, Position, Size } from "./common.ts";
 import { DwmMonitor } from "./monitor.ts";
 
 export interface CreateWindowOptions {
@@ -103,6 +103,7 @@ export type InputMode =
   | "rawMouseMotion";
 
 export type InputModeValue = "normal" | "hidden" | "disabled";
+
 /**
  * Represents a Window
  */
@@ -132,6 +133,9 @@ export abstract class DwmWindow {
    */
   abstract size: Size;
 
+  /**
+   * Frame size
+   */
   abstract readonly frameSize: LTRB;
 
   /**
@@ -245,26 +249,47 @@ export abstract class DwmWindow {
     maxWidth: number,
     maxHeight: number,
   ): void;
+
   /**
    * Set the window's input mode
    */
   abstract setInputMode(mode: InputMode, value: InputModeValue | boolean): void;
+
   /**
    * Get the window's input mode
    */
   abstract getInputMode(mode: InputMode): InputModeValue;
+
   /**
    * Check if the window has raw mouse motion
    */
   abstract rawMouseMotionSupported(): boolean;
 
+  /**
+   * Sets the cursor to a specific position
+   */
   abstract setCursorPos(xpos: number, ypos: number): void;
 
+  /**
+   * Sets the cursor to a custom image
+   */
   abstract setCustomCursor(
     image: Uint8Array,
     hotspot: Size,
     position: Position,
   ): void;
+
+  /**
+   * Sets the window icon to a custom icon
+   */
+  abstract setIcon(
+    image: Uint8Array,
+    sizes: Size,
+  ): void;
+  abstract setIcon(
+    image: ImageStruct,
+  ): void;
+
   /**
    * Check if the window is closed
    */

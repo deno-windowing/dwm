@@ -8,6 +8,12 @@ export interface Size {
   height: number;
 }
 
+export interface ImageStruct {
+  image: Uint8Array;
+  width: number;
+  height: number;
+}
+
 export interface Rect {
   x: number;
   y: number;
