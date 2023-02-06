@@ -1,3 +1,9 @@
 .vscode/
 deno.lock
 glfw3.dll
+*.exe
+examples/cube/SplashScreen.png
+examples/cube/Square44x44Logo.png
+examples/cube/Square150x150Logo.png
+examples/cube/StoreLogo.png
+examples/cube/AppxManifest.xml

@@ -5,6 +5,8 @@
     "example_canvas_chart": "deno run -A --unstable examples/canvas_chart.ts",
     "example_cursor": "deno run -A --unstable examples/cursor.ts",
     "example_cube": "deno run -A --unstable examples/cube.ts",
+    "example_cube2": "deno run -A --unstable examples/cube2.ts",
+    "example_styles": "deno run -A --unstable examples/styles.ts",
     "example_events": "deno run -A --unstable examples/events.ts",
     "example_multi_window": "deno run -A --unstable examples/multi-window.ts",
     "example_transparent": "deno run -A --unstable examples/transparent.ts",
