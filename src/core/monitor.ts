@@ -15,6 +15,9 @@ export abstract class DwmMonitor {
    */
   abstract readonly name: string;
 
+  /**
+   * Monitor's pointer
+   */
   abstract readonly nativeHandle: Deno.PointerValue;
 
   /**

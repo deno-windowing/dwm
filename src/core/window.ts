@@ -207,6 +207,9 @@ export abstract class DwmWindow {
 
   /**
    * Sets the cursor icon
+   * ```ts
+   * win.setCursor("hand");
+   * ```
    */
   abstract setCursor(icon?: CursorIcon): void;
 
@@ -272,6 +275,21 @@ export abstract class DwmWindow {
 
   /**
    * Sets the cursor to a custom image
+   * ```ts
+   * const cursor = new Uint8Array(16 * 16 * 4);
+   * for (let i = 0; i < 16; i++) {
+   *   cursor[i * 16 * 4 + i * 4 + 3] = 255;
+   *   cursor[i * 16 * 4 + (15 - i) * 4 + 3] = 255;
+   * }
+   *
+   * win.setCustomCursor(cursor, {
+   *   width: 16,
+   *   height: 16,
+   * }, {
+   *   x: 0,
+   *   y: 0,
+   * });
+   * ```
    */
   abstract setCustomCursor(
     image: Uint8Array,
@@ -281,6 +299,11 @@ export abstract class DwmWindow {
 
   /**
    * Sets the window icon to a custom icon
+   * ```ts
+   * import { decode } from "https://deno.land/x/pngs@0.1.1/mod.ts";
+   *
+   * win.setIcon(decode(await Deno.readFile("./path/to/icon/icon.png")));
+   * ```
    */
   abstract setIcon(
     image: Uint8Array,

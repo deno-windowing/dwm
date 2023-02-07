@@ -28,6 +28,17 @@ const {
   getPrimaryMonitor,
 } = platform;
 
+/**
+ * Creates a new DWM window
+ * ```ts
+ * const win = createWindow({
+ *   title: "Deno Window Manager",
+ *   width: 800,
+ *   height: 600,
+ *   resizable: true,
+ * });
+ * ```
+ */
 export function createWindow(options: CreateWindowOptions) {
   return new Window(options);
 }

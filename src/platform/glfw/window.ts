@@ -163,6 +163,9 @@ const I32_3 = new Int32Array(1);
 const F32_0 = new Float32Array(1);
 const F32_1 = new Float32Array(1);
 
+/**
+ * Processes all pending events.
+ */
 export function pollEvents(wait = false) {
   if (wait) {
     glfwWaitEvents();
@@ -171,14 +174,23 @@ export function pollEvents(wait = false) {
   }
 }
 
+/**
+ * Returns the address of the specified function for the current context.
+ */
 export function getProcAddress(name: string) {
   return glfwGetProcAddress(cstr(name));
 }
 
+/**
+ * Checks if the machine has vulkan support.
+ */
 export function vulkanSupported() {
   return glfwVulkanSupported() === 1;
 }
 
+/**
+ * Gets the required instances extensions
+ */
 export function getRequiredInstanceExtensions() {
   const ptr = glfwGetRequiredInstanceExtensions(new Uint8Array(U32_0.buffer));
   const ptrView = new Deno.UnsafePointerView(ptr);
