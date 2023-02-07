@@ -8,6 +8,9 @@ const win = createWindow({
   resizable: true,
 });
 
-win.setIcon(decode(Deno.readFileSync("examples/assets/cursor.png")));
+const img = await fetch(
+  "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Bell%20pepper/3D/bell_pepper_3d.png",
+);
+win.setIcon(decode(new Uint8Array(await img.arrayBuffer())));
 
 await mainloop();

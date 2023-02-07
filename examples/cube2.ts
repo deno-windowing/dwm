@@ -12,15 +12,15 @@ const win = new WindowCanvas({
   transparent: true,
   floating: true,
 });
-win.window.setIcon(decode(Deno.readFileSync("examples/assets/cursor.png")));
+
+const img = await fetch(
+  "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Avocado/3D/avocado_3d.png",
+);
+win.window.setIcon(decode(new Uint8Array(await img.arrayBuffer())));
 
 applyMicaAlt(win.window);
 applyDark(win.window);
 
-win.window.position = {
-  x: monitor.workArea.width - 800,
-  y: monitor.workArea.height - 800,
-};
 
 const ctx = win.ctx;
 ctx.fillStyle = "#fff";
