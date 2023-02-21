@@ -2,6 +2,7 @@
   "tasks": {
     "example_opengl": "deno run -A --unstable examples/opengl.ts",
     "example_imgui": "deno run -A --unstable examples/imgui.ts",
+    "example_imgui2": "deno run -A --unstable examples/imgui2.ts",
     "example_canvas": "deno run -A --unstable examples/canvas.ts",
     "example_canvas_chart": "deno run -A --unstable examples/canvas-chart.ts",
     "example_canvas_svg": "deno run -A --unstable examples/canvas-svg.ts",
