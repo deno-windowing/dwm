@@ -13,4 +13,4 @@ export function fromCstr(str: string): Uint8Array {
   return buf;
 }
 export const toCstr = (ptr: Deno.PointerValue, offset?: number) =>
-  Deno.UnsafePointerView.getCString(ptr, offset);
+  Deno.UnsafePointerView.getCString(ptr!, offset);

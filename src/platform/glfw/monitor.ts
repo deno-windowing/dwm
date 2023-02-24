@@ -21,7 +21,7 @@ const I32_3 = new Int32Array(1);
 const I32_4 = new Int32Array(1);
 
 function readVideoMode(ptr: Deno.PointerValue): VideoMode {
-  const buf = new Deno.UnsafePointerView(ptr);
+  const buf = new Deno.UnsafePointerView(ptr!);
   return {
     width: buf.getInt32(0),
     height: buf.getInt32(4),
@@ -34,11 +34,14 @@ function readVideoMode(ptr: Deno.PointerValue): VideoMode {
 
 export function getMonitors() {
   const ptr = glfwGetMonitors(I32_1);
+  if (ptr === null) throw new Error("could not get monitors");
   const ptrView = new Deno.UnsafePointerView(ptr);
   const count = I32_1[0];
   const monitors: MonitorGlfw[] = [];
   for (let i = 0; i < count; i++) {
-    monitors.push(new MonitorGlfw(ptrView.getBigUint64(i * 8)));
+    monitors.push(
+      new MonitorGlfw(Deno.UnsafePointer.create(ptrView.getBigUint64(i * 8))),
+    );
   }
   return monitors;
 }
@@ -48,16 +51,16 @@ export function getPrimaryMonitor() {
 }
 
 export class MonitorGlfw extends DwmMonitor {
-  constructor(public nativeHandle: Deno.PointerValue = 0) {
+  constructor(public nativeHandle: Deno.PointerValue = null) {
     super();
-    if (nativeHandle == 0) {
+    if (nativeHandle == null) {
       throw new Error("Invalid monitor handle");
     }
   }
 
   get name() {
     const ptr = glfwGetMonitorName(this.nativeHandle);
-    if (ptr === 0) return "";
+    if (ptr === null) return "";
     return Deno.UnsafePointerView.getCString(ptr);
   }
 
@@ -90,7 +93,13 @@ export class MonitorGlfw extends DwmMonitor {
     const count = I32_1[0];
     const modes: VideoMode[] = [];
     for (let i = 0; i < count; i++) {
-      modes.push(readVideoMode(BigInt(ptr) + BigInt(i) * 24n));
+      modes.push(
+        readVideoMode(
+          Deno.UnsafePointer.create(
+            BigInt(Deno.UnsafePointer.value(ptr)) + BigInt(i) * 24n,
+          ),
+        ),
+      );
     }
     return modes;
   }
