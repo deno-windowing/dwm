@@ -147,7 +147,7 @@ const errorCallback = new Deno.UnsafeCallback(
     console.error(
       "GlfwError:",
       error,
-      Deno.UnsafePointerView.getCString(description),
+      Deno.UnsafePointerView.getCString(description!),
     );
   },
 );
@@ -193,11 +193,11 @@ export function vulkanSupported() {
  */
 export function getRequiredInstanceExtensions() {
   const ptr = glfwGetRequiredInstanceExtensions(new Uint8Array(U32_0.buffer));
-  const ptrView = new Deno.UnsafePointerView(ptr);
+  const ptrView = new Deno.UnsafePointerView(ptr!);
   const extensions = new Array<string>(U32_0[0]);
   for (let i = 0; i < extensions.length; i++) {
     extensions[i] = Deno.UnsafePointerView.getCString(
-      ptrView.getBigUint64(i * 8),
+      Deno.UnsafePointer.create(ptrView.getBigUint64(i * 8))!,
     );
   }
   return extensions;
@@ -589,10 +589,12 @@ const dropCallback = new Deno.UnsafeCallback(
     const window = WINDOWS.get(handle);
     if (window) {
       const out = [];
-      const view = new Deno.UnsafePointerView(BigInt(paths));
+      const view = new Deno.UnsafePointerView(paths!);
       for (let i = 0; i < count; i++) {
-        const path = Number(view.getBigUint64(i * 8));
-        out.push(Deno.UnsafePointerView.getCString(path));
+        const path = Deno.UnsafePointer.create(
+          Number(view.getBigUint64(i * 8)),
+        );
+        out.push(Deno.UnsafePointerView.getCString(path!));
       }
       dispatchEvent(new WindowDropEvent(window, out));
     }
@@ -887,7 +889,11 @@ export class WindowGlfw extends DwmWindow {
     const structview = new DataView(struct.buffer);
     structview.setInt32(0, hotspot.width, true);
     structview.setInt32(4, hotspot.width, true);
-    structview.setBigInt64(8, BigInt(stringptr), true);
+    structview.setBigInt64(
+      8,
+      BigInt(Deno.UnsafePointer.value(stringptr)),
+      true,
+    );
 
     const cursor = glfwCreateCursor(
       struct,
@@ -913,7 +919,11 @@ export class WindowGlfw extends DwmWindow {
     const structview = new DataView(struct.buffer);
     structview.setInt32(0, image.width, true);
     structview.setInt32(4, image.width, true);
-    structview.setBigInt64(8, BigInt(stringptr), true);
+    structview.setBigInt64(
+      8,
+      BigInt(Deno.UnsafePointer.value(stringptr)),
+      true,
+    );
     glfwSetWindowIcon(this.#nativeHandle, 1, structview);
   }
 
@@ -925,13 +935,15 @@ export class WindowGlfw extends DwmWindow {
     const result = glfwCreateWindowSurface(
       instance,
       this.#nativeHandle,
-      allocator ?? 0,
+      allocator ?? null,
       new Uint8Array(surfaceOut.buffer),
     );
     if (result !== 0) {
       throw new Error(`Failed to create surface: ${result}`);
     }
-    return surfaceOut[0] < MAX_SAFE_INT ? Number(surfaceOut[0]) : surfaceOut[0];
+    return Deno.UnsafePointer.create(
+      surfaceOut[0] < MAX_SAFE_INT ? Number(surfaceOut[0]) : surfaceOut[0],
+    );
   }
 
   getMonitor(): DwmMonitor | undefined {
@@ -960,7 +972,7 @@ export class WindowGlfw extends DwmWindow {
     } else {
       glfwSetWindowMonitor(
         this.#nativeHandle,
-        0,
+        null,
         x ?? 0,
         y ?? 0,
         width ?? 0,
