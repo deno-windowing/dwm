@@ -222,7 +222,7 @@ export function getInstanceProcAddress(
   return glfwGetInstanceProcAddress(instance, cstr(name));
 }
 
-const WINDOWS = new Map<Deno.PointerValue, WindowGlfw>();
+const WINDOWS = new Map<bigint, WindowGlfw>();
 let countedWindows = -1;
 
 const cursorPosCallback = new Deno.UnsafeCallback(
@@ -231,7 +231,7 @@ const cursorPosCallback = new Deno.UnsafeCallback(
     result: "void",
   } as const,
   (handle, x, y) => {
-    const window = WINDOWS.get(handle);
+    const window = WINDOWS.get(BigInt(Deno.UnsafePointer.value(handle)));
     if (window) {
       const lastX = window._inputState.mouseX;
       const lastY = window._inputState.mouseY;
@@ -287,7 +287,7 @@ const windowPosCallback = new Deno.UnsafeCallback(
     result: "void",
   } as const,
   (handle, x, y) => {
-    const window = WINDOWS.get(handle);
+    const window = WINDOWS.get(BigInt(Deno.UnsafePointer.value(handle)));
     if (window) {
       dispatchEvent(new WindowMoveEvent(window, x, y));
     }
@@ -300,7 +300,7 @@ const windowSizeCallback = new Deno.UnsafeCallback(
     result: "void",
   } as const,
   (handle, width, height) => {
-    const window = WINDOWS.get(handle);
+    const window = WINDOWS.get(BigInt(Deno.UnsafePointer.value(handle)));
     if (window) {
       dispatchEvent(new WindowResizeEvent(window, width, height));
     }
@@ -313,7 +313,7 @@ const windowCloseCallback = new Deno.UnsafeCallback(
     result: "void",
   } as const,
   (handle) => {
-    const window = WINDOWS.get(handle);
+    const window = WINDOWS.get(BigInt(Deno.UnsafePointer.value(handle)));
     if (window) {
       if (dispatchEvent(new WindowCloseEvent(window))) {
         window.close();
@@ -328,7 +328,7 @@ const windowRefreshCallback = new Deno.UnsafeCallback(
     result: "void",
   } as const,
   (handle) => {
-    const window = WINDOWS.get(handle);
+    const window = WINDOWS.get(BigInt(Deno.UnsafePointer.value(handle)));
     if (window) {
       dispatchEvent(new WindowRefreshEvent(window));
     }
@@ -341,7 +341,7 @@ const windowFocusCallback = new Deno.UnsafeCallback(
     result: "void",
   } as const,
   (handle, focused) => {
-    const window = WINDOWS.get(handle);
+    const window = WINDOWS.get(BigInt(Deno.UnsafePointer.value(handle)));
     if (window) {
       dispatchEvent(new WindowFocusEvent(window, !!focused));
     }
@@ -354,7 +354,7 @@ const windowIconifyCallback = new Deno.UnsafeCallback(
     result: "void",
   } as const,
   (handle, iconified) => {
-    const window = WINDOWS.get(handle);
+    const window = WINDOWS.get(BigInt(Deno.UnsafePointer.value(handle)));
     if (window) {
       dispatchEvent(new WindowMinimizeEvent(window, !!iconified));
     }
@@ -367,7 +367,7 @@ const windowMaximizeCallback = new Deno.UnsafeCallback(
     result: "void",
   } as const,
   (handle, maximized) => {
-    const window = WINDOWS.get(handle);
+    const window = WINDOWS.get(BigInt(Deno.UnsafePointer.value(handle)));
     if (window) {
       dispatchEvent(new WindowMaximizeEvent(window, !!maximized));
     }
@@ -380,7 +380,7 @@ const bufferSizeCallback = new Deno.UnsafeCallback(
     result: "void",
   } as const,
   (handle, width, height) => {
-    const window = WINDOWS.get(handle);
+    const window = WINDOWS.get(BigInt(Deno.UnsafePointer.value(handle)));
     if (window) {
       dispatchEvent(new WindowFramebufferSizeEvent(window, width, height));
     }
@@ -393,7 +393,7 @@ const keyCallback = new Deno.UnsafeCallback(
     result: "void",
   } as const,
   (handle, key, scancode, action, mods) => {
-    const window = WINDOWS.get(handle);
+    const window = WINDOWS.get(BigInt(Deno.UnsafePointer.value(handle)));
     if (window) {
       dispatchEvent(
         new WindowKeyboardEvent(
@@ -422,7 +422,7 @@ const charCallback = new Deno.UnsafeCallback(
     result: "void",
   } as const,
   (handle, codepoint) => {
-    const window = WINDOWS.get(handle);
+    const window = WINDOWS.get(BigInt(Deno.UnsafePointer.value(handle)));
     if (window) {
       dispatchEvent(
         new WindowInputEvent(window, String.fromCodePoint(codepoint)),
@@ -437,7 +437,7 @@ const cursorEnterCallback = new Deno.UnsafeCallback(
     result: "void",
   } as const,
   (handle, entered) => {
-    const window = WINDOWS.get(handle);
+    const window = WINDOWS.get(BigInt(Deno.UnsafePointer.value(handle)));
     if (window) {
       dispatchEvent(
         new WindowMouseEvent(
@@ -468,7 +468,7 @@ const mouseButtonCallback = new Deno.UnsafeCallback(
     result: "void",
   } as const,
   (handle, button, action, mods) => {
-    const window = WINDOWS.get(handle);
+    const window = WINDOWS.get(BigInt(Deno.UnsafePointer.value(handle)));
     if (window) {
       const x = window._inputState.mouseX;
       const y = window._inputState.mouseY;
@@ -567,7 +567,7 @@ const scrollCallback = new Deno.UnsafeCallback(
     result: "void",
   } as const,
   (handle, x, y) => {
-    const window = WINDOWS.get(handle);
+    const window = WINDOWS.get(BigInt(Deno.UnsafePointer.value(handle)));
     if (window) {
       dispatchEvent(
         new WindowScrollEvent(
@@ -586,7 +586,7 @@ const dropCallback = new Deno.UnsafeCallback(
     result: "void",
   } as const,
   (handle, count, paths) => {
-    const window = WINDOWS.get(handle);
+    const window = WINDOWS.get(BigInt(Deno.UnsafePointer.value(handle)));
     if (window) {
       const out = [];
       const view = new Deno.UnsafePointerView(paths!);
@@ -674,7 +674,7 @@ export class WindowGlfw extends DwmWindow {
       throw new Error("Failed to create window");
     }
 
-    WINDOWS.set(this.#nativeHandle, this);
+    WINDOWS.set(BigInt(Deno.UnsafePointer.value(this.#nativeHandle)), this);
 
     glfwSetCursorPosCallback(this.#nativeHandle, cursorPosCallback.pointer);
     glfwSetWindowPosCallback(this.#nativeHandle, windowPosCallback.pointer);
@@ -1058,7 +1058,7 @@ export class WindowGlfw extends DwmWindow {
     this.#closed = true;
     dispatchEvent(new WindowClosedEvent(this));
     glfwDestroyWindow(this.#nativeHandle);
-    WINDOWS.delete(this.#nativeHandle);
+    WINDOWS.delete(BigInt(Deno.UnsafePointer.value(this.#nativeHandle)));
     if (this.#counted) {
       if (--countedWindows === 0) {
         glfwTerminate();
