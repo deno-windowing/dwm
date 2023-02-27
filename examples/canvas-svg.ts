@@ -22,7 +22,6 @@ applyDark(win.window);
 
 win.ctx.scale(15, 15);
 win.onDraw = (ctx) => {
-
   // from https://github.com/microsoft/fluentui-emoji/blob/main/assets/Avocado/Flat/avocado_flat.svg
   ctx.fillStyle = "#44911B";
   ctx.fill(

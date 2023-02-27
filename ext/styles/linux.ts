@@ -1,7 +1,6 @@
 import { StylePlatform } from "./platform.ts";
 import { DwmWindow } from "../../mod.ts";
 
-
 function applyBlur(win: DwmWindow) {
   console.warn("blur not implemented for this system");
 }

@@ -21,7 +21,6 @@ win.window.setIcon(decode(new Uint8Array(await img.arrayBuffer())));
 applyMicaAlt(win.window);
 applyDark(win.window);
 
-
 const ctx = win.ctx;
 ctx.fillStyle = "#fff";
 ctx.strokeStyle = "#fff";
