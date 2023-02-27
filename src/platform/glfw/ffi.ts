@@ -328,21 +328,21 @@ const symbols = {
     parameters: ["pointer"],
     result: "pointer",
   },
-  glfwGetWaylandDisplay: {
-    name: Deno.build.os === "linux" ? "glfwGetWaylandDisplay" : "glfwInit",
-    parameters: [],
-    result: "pointer",
-  },
-  glfwGetWaylandMonitor: {
-    name: Deno.build.os === "linux" ? "glfwGetWaylandMonitor" : "glfwInit",
-    parameters: ["pointer"],
-    result: "pointer",
-  },
-  glfwGetWaylandWindow: {
-    name: Deno.build.os === "linux" ? "glfwGetWaylandWindow" : "glfwInit",
-    parameters: ["pointer"],
-    result: "pointer",
-  },
+  // glfwGetWaylandDisplay: {
+  //   name: Deno.build.os === "linux" ? "glfwGetWaylandDisplay" : "glfwInit",
+  //   parameters: [],
+  //   result: "pointer",
+  // },
+  // glfwGetWaylandMonitor: {
+  //   name: Deno.build.os === "linux" ? "glfwGetWaylandMonitor" : "glfwInit",
+  //   parameters: ["pointer"],
+  //   result: "pointer",
+  // },
+  // glfwGetWaylandWindow: {
+  //   name: Deno.build.os === "linux" ? "glfwGetWaylandWindow" : "glfwInit",
+  //   parameters: ["pointer"],
+  //   result: "pointer",
+  // },
   glfwGetEGLDisplay: {
     name: Deno.build.os === "linux" ? "glfwGetEGLDisplay" : "glfwInit",
     parameters: [],
