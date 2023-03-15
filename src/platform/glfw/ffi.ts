@@ -1,8 +1,8 @@
 import { cachedir } from "https://deno.land/x/cache@0.2.13/directories.ts";
-import darwin from "https://glfw-binaries.deno.dev/3.4.0-patch1/glfw3_darwin.js";
-import darwinAarch64 from "https://glfw-binaries.deno.dev/3.4.0-patch1/glfw3_darwin_aarch64.js";
-import windows from "https://glfw-binaries.deno.dev/3.4.0-patch1/glfw3_windows.js";
-import linux from "https://glfw-binaries.deno.dev/3.4.0-patch1/glfw3_linux.js";
+import darwin from "https://glfw-binaries.deno.dev/3.4.0-patch2/glfw3_darwin.js";
+import darwinAarch64 from "https://glfw-binaries.deno.dev/3.4.0-patch2/glfw3_darwin_aarch64.js";
+import windows from "https://glfw-binaries.deno.dev/3.4.0-patch2/glfw3_windows.js";
+import linux from "https://glfw-binaries.deno.dev/3.4.0-patch2/glfw3_linux.js";
 
 export const GLFW_VERSION = "3.4.0";
 
