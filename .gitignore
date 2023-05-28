@@ -8,3 +8,4 @@ examples/cube/Square150x150Logo.png
 examples/cube/StoreLogo.png
 examples/cube/AppxManifest.xml
 imgui.ini
+.DS_Store

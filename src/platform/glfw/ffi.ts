@@ -264,99 +264,99 @@ const symbols = {
     result: "i32",
   },
   glfwGetWin32Adapter: {
-    name: Deno.build.os === "windows" ? "glfwGetWin32Adapter" : "glfwInit",
     parameters: ["pointer"],
     result: "pointer",
+    optional: true,
   },
   glfwGetWin32Monitor: {
-    name: Deno.build.os === "windows" ? "glfwGetWin32Monitor" : "glfwInit",
     parameters: ["pointer"],
     result: "pointer",
+    optional: true,
   },
   glfwGetWin32Window: {
-    name: Deno.build.os === "windows" ? "glfwGetWin32Window" : "glfwInit",
     parameters: ["pointer"],
     result: "pointer",
+    optional: true,
   },
   glfwGetWGLContext: {
-    name: Deno.build.os === "windows" ? "glfwGetWGLContext" : "glfwInit",
     parameters: ["pointer"],
     result: "pointer",
   },
   glfwGetCocoaMonitor: {
-    name: Deno.build.os === "darwin" ? "glfwGetCocoaMonitor" : "glfwInit",
     parameters: ["pointer"],
     result: "pointer",
+    optional: true,
   },
   glfwGetCocoaWindow: {
-    name: Deno.build.os === "darwin" ? "glfwGetCocoaWindow" : "glfwInit",
     parameters: ["pointer"],
     result: "pointer",
+    optional: true,
   },
   glfwGetNSGLContext: {
-    name: Deno.build.os === "darwin" ? "glfwGetNSGLContext" : "glfwInit",
     parameters: ["pointer"],
     result: "pointer",
+    optional: true,
   },
   glfwGetX11Display: {
-    name: Deno.build.os === "linux" ? "glfwGetX11Display" : "glfwInit",
     parameters: [],
     result: "pointer",
+    optional: true,
   },
   glfwGetX11Adapter: {
-    name: Deno.build.os === "linux" ? "glfwGetX11Adapter" : "glfwInit",
     parameters: ["pointer"],
     result: "pointer",
+    optional: true,
   },
   glfwGetX11Monitor: {
-    name: Deno.build.os === "linux" ? "glfwGetX11Monitor" : "glfwInit",
     parameters: ["pointer"],
     result: "pointer",
+    optional: true,
   },
   glfwGetX11Window: {
-    name: Deno.build.os === "linux" ? "glfwGetX11Window" : "glfwInit",
     parameters: ["pointer"],
     result: "pointer",
+    optional: true,
   },
   glfwGetGLXContext: {
-    name: Deno.build.os === "linux" ? "glfwGetGLXContext" : "glfwInit",
     parameters: ["pointer"],
     result: "pointer",
+    optional: true,
   },
   glfwGetGLXWindow: {
-    name: Deno.build.os === "linux" ? "glfwGetGLXWindow" : "glfwInit",
     parameters: ["pointer"],
     result: "pointer",
+    optional: true,
   },
-  // glfwGetWaylandDisplay: {
-  //   name: Deno.build.os === "linux" ? "glfwGetWaylandDisplay" : "glfwInit",
-  //   parameters: [],
-  //   result: "pointer",
-  // },
-  // glfwGetWaylandMonitor: {
-  //   name: Deno.build.os === "linux" ? "glfwGetWaylandMonitor" : "glfwInit",
-  //   parameters: ["pointer"],
-  //   result: "pointer",
-  // },
-  // glfwGetWaylandWindow: {
-  //   name: Deno.build.os === "linux" ? "glfwGetWaylandWindow" : "glfwInit",
-  //   parameters: ["pointer"],
-  //   result: "pointer",
-  // },
-  glfwGetEGLDisplay: {
-    name: Deno.build.os === "linux" ? "glfwGetEGLDisplay" : "glfwInit",
+  glfwGetWaylandDisplay: {
     parameters: [],
     result: "pointer",
+    optional: true,
   },
-  glfwGetEGLContext: {
-    name: Deno.build.os === "linux" ? "glfwGetEGLContext" : "glfwInit",
+  glfwGetWaylandMonitor: {
     parameters: ["pointer"],
     result: "pointer",
+    optional: true,
+  },
+  glfwGetWaylandWindow: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  glfwGetEGLDisplay: {
+    parameters: [],
+    result: "pointer",
+    optional: true,
+  },
+  glfwGetEGLContext: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
   },
   glfwGetEGLSurface: {
     name: Deno.build.os === "linux" ? "glfwGetEGLSurface" : "glfwInit",
     parameters: ["pointer"],
     result: "pointer",
+    optional: true,
   },
   glfwGetMonitors: {
     parameters: ["buffer"],
