@@ -1013,7 +1013,7 @@ export class WindowGlfw extends DwmWindow {
         lockKeyMods: GLFW_LOCK_KEY_MODS,
         rawMouseMotion: GLFW_RAW_MOUSE_MOTION,
       }[mode],
-      typeof (value) === "boolean" ? value ? 1 : 0 : {
+      typeof value === "boolean" ? value ? 1 : 0 : {
         normal: GLFW_CURSOR_NORMAL,
         hidden: GLFW_CURSOR_HIDDEN,
         disabled: GLFW_CURSOR_DISABLED,
