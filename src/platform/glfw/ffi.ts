@@ -472,3 +472,10 @@ export const ffi = mod.symbols;
 export function cstr(str: string) {
   return new TextEncoder().encode(str + "\0");
 }
+
+// const objc = Deno.build.os === "darwin" ? Deno.dlopen("libobjc.dylib", {
+//   objc_getClass: {
+//     parameters: ["buffer"],
+//     result: "pointer",
+//   },
+// } as const).symbols : undefined;
