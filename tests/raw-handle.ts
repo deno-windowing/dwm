@@ -21,8 +21,8 @@ const device = await adapter!.requestDevice();
 
 const window = createWindow({
   title: "Deno Window Manager",
-  width: 800,
-  height: 600,
+  width,
+  height,
   resizable: true,
 });
 
