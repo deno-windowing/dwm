@@ -1070,13 +1070,24 @@ export class WindowGlfw extends DwmWindow {
         // TODO: Implement
         display = null;
         break;
-      case "windows":
+      case "windows": {
         platform = "win32";
+        const { GetModuleHandleW } = Deno.dlopen("kernel32.dll", {
+          GetModuleHandleW: {
+            parameters: ["pointer"],
+            result: "pointer",
+          },
+        }).symbols;
         handle = ffi.glfwGetWin32Window!(this.#nativeHandle);
-        // TODO: Implement
-        display = null;
+        display = GetModuleHandleW(null);
         break;
+      }
       case "linux":
+      case "aix":
+      case "freebsd":
+      case "illumos":
+      case "netbsd":
+      case "solaris":
         if (ffi.glfwGetWaylandWindow && ffi.glfwGetWaylandDisplay) {
           platform = "wayland";
           handle = ffi.glfwGetWaylandWindow(this.#nativeHandle);
