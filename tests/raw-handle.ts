@@ -1,11 +1,4 @@
 import { createWindow, mainloop } from "../mod.ts";
-import glslang from "https://deno.land/x/glslang@1.0.1/mod.ts";
-import "https://cdn.babylonjs.com/twgsl/twgsl.js";
-
-// @ts-expect-error TODO
-const twgsl = await globalThis.twgsl(
-  "https://cdn.babylonjs.com/twgsl/twgsl.wasm",
-);
 
 const shaderFile = Deno.args[0];
 if (!shaderFile) {
@@ -54,29 +47,7 @@ let uniformValues: Float32Array,
 
 function createPipeline() {
   let shader = Deno.readTextFileSync(shaderFile);
-  let fragEntry = "fs_main";
-  if (shaderFile.endsWith(".glsl")) {
-    const spirv = glslang.compileGLSL(shader, "fragment", false);
-    shader = twgsl.convertSpirV2WGSL(spirv);
-
-    shader = `
-struct VertexInput {
-    @builtin(vertex_index) vertex_index: u32,
-};
-@vertex
-fn vs_main(in: VertexInput) -> @builtin(position) vec4<f32> {
-    // Default vertex shader
-    var vertices = array<vec2<f32>, 3>(
-        vec2<f32>(-1., 1.),
-        vec2<f32>(3.0, 1.),
-        vec2<f32>(-1., -3.0),
-    );
-    return vec4<f32>(vertices[in.vertex_index], 0.0, 1.0);
-}
-${shader}
-`;
-    fragEntry = "main";
-  }
+  const fragEntry = "fs_main";
 
   shader = `${fragPrelude}\n${shader}`;
 
