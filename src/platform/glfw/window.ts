@@ -17,6 +17,7 @@ import {
   WindowResizeEvent,
   WindowScrollEvent,
 } from "../../core/event.ts";
+import { RawPlatform } from "../../core/mod.ts";
 import { DwmMonitor } from "../../core/monitor.ts";
 import {
   CreateWindowOptions,
@@ -1054,6 +1055,43 @@ export class WindowGlfw extends DwmWindow {
     glfwSetCursorPos(this.#nativeHandle, x, y);
   }
 
+  rawHandle(): [
+    RawPlatform,
+    Deno.PointerValue<unknown>,
+    Deno.PointerValue<unknown>,
+  ] {
+    let platform: RawPlatform;
+    let handle: Deno.PointerValue<unknown>;
+    let display: Deno.PointerValue<unknown>;
+    switch (Deno.build.os) {
+      case "darwin":
+        platform = "cocoa";
+        handle = ffi.glfwGetCocoaWindow!(this.#nativeHandle);
+        // TODO: Implement
+        display = null;
+        break;
+      case "windows":
+        platform = "win32";
+        handle = ffi.glfwGetWin32Window!(this.#nativeHandle);
+        // TODO: Implement
+        display = null;
+        break;
+      case "linux":
+        if (ffi.glfwGetWaylandWindow && ffi.glfwGetWaylandDisplay) {
+          platform = "wayland";
+          handle = ffi.glfwGetWaylandWindow(this.#nativeHandle);
+          display = ffi.glfwGetWaylandDisplay();
+        } else {
+          platform = "x11";
+          handle = ffi.glfwGetX11Window!(this.#nativeHandle);
+          display = ffi.glfwGetX11Display!();
+        }
+        break;
+      default:
+        throw new Error(`Unsupported platform: ${Deno.build.os}`);
+    }
+    return [platform, handle, display];
+  }
   close() {
     this.#closed = true;
     dispatchEvent(new WindowClosedEvent(this));
