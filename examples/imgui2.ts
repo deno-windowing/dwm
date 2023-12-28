@@ -6,7 +6,6 @@ import {
   mainloop,
   WindowCanvas,
 } from "../ext/canvas.ts";
-import { pollEvents } from "../src/platform/glfw/window.ts";
 
 const win = new WindowCanvas({
   title: "IMGUI Skia",

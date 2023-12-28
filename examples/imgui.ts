@@ -1,4 +1,4 @@
-import { createWindow, getProcAddress, mainloop, pollEvents } from "../mod.ts";
+import { createWindow, getProcAddress, mainloop } from "../mod.ts";
 import * as gl from "https://deno.land/x/gluten@0.1.3/api/gles23.2.ts";
 import { CBool, createContext, destroyContext, imgui } from "../ext/imgui.ts";
 

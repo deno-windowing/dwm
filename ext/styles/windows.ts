@@ -6,19 +6,13 @@ import {
   DwmEnableBlurBehindWindow,
   DwmSetWindowAttribute,
   DWMWA_USE_IMMERSIVE_DARK_MODE,
-} from "https://win32.deno.dev/0.2.0/Graphics.Dwm";
+} from "https://win32.deno.dev/0.4.1/Graphics.Dwm";
 import { DwmWindow } from "../../mod.ts";
 
-// const { SetWindowCompositionAttribute } = Deno.dlopen("user32.dll", {
-//   "SetWindowCompositionAttribute": {
-//     parameters: ["pointer", "pointer"],
-//     result: "pointer",
-//   },
-// }).symbols;
 
 function applyBlur(win: DwmWindow) {
   DwmEnableBlurBehindWindow(
-    ffi.glfwGetWin32Window(win.nativeHandle),
+    ffi.glfwGetWin32Window!(win.nativeHandle),
     allocDWM_BLURBEHIND({
       dwFlags: DWM_BB_ENABLE,
       fEnable: true,
@@ -30,7 +24,7 @@ function applyBlur(win: DwmWindow) {
 
 function clearBlur(win: DwmWindow) {
   DwmEnableBlurBehindWindow(
-    ffi.glfwGetWin32Window(win.nativeHandle),
+    ffi.glfwGetWin32Window!(win.nativeHandle),
     allocDWM_BLURBEHIND({
       dwFlags: DWM_BB_ENABLE,
       fEnable: false,
@@ -42,7 +36,7 @@ function clearBlur(win: DwmWindow) {
 
 function applyDark(win: DwmWindow) {
   DwmSetWindowAttribute(
-    ffi.glfwGetWin32Window(win.nativeHandle),
+    ffi.glfwGetWin32Window!(win.nativeHandle),
     DWMWA_USE_IMMERSIVE_DARK_MODE,
     Uint8Array.of(2),
     4,
@@ -51,7 +45,7 @@ function applyDark(win: DwmWindow) {
 
 function applyLight(win: DwmWindow) {
   DwmSetWindowAttribute(
-    ffi.glfwGetWin32Window(win.nativeHandle),
+    ffi.glfwGetWin32Window!(win.nativeHandle),
     DWMWA_USE_IMMERSIVE_DARK_MODE,
     Uint8Array.of(0),
     4,
@@ -60,7 +54,7 @@ function applyLight(win: DwmWindow) {
 
 function applyMica(win: DwmWindow) {
   DwmSetWindowAttribute(
-    ffi.glfwGetWin32Window(win.nativeHandle),
+    ffi.glfwGetWin32Window!(win.nativeHandle),
     38,
     Uint8Array.of(2),
     4,
@@ -69,7 +63,7 @@ function applyMica(win: DwmWindow) {
 
 function applyMicaAlt(win: DwmWindow) {
   DwmSetWindowAttribute(
-    ffi.glfwGetWin32Window(win.nativeHandle),
+    ffi.glfwGetWin32Window!(win.nativeHandle),
     38,
     Uint8Array.of(4),
     4,
@@ -78,7 +72,7 @@ function applyMicaAlt(win: DwmWindow) {
 
 function clearMica(win: DwmWindow) {
   DwmSetWindowAttribute(
-    ffi.glfwGetWin32Window(win.nativeHandle),
+    ffi.glfwGetWin32Window!(win.nativeHandle),
     38,
     Uint8Array.of(0),
     4,
