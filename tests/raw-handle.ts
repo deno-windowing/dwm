@@ -155,8 +155,22 @@ context.configure({
   }
 })();
 
+addEventListener("mousemove", (evt) => {
+  uniformValues[0] = evt.clientX / width;
+  uniformValues[1] = evt.clientY / height;
+});
+
+addEventListener("mousedown", (evt) => {
+  uniformValues[2] = 1;
+});
+
+addEventListener("mouseup", (evt) => {
+  uniformValues[2] = 0;
+});
+
 await mainloop(() => {
   uniformValues[3]++; // frame++
+
   const commandEncoder = device.createCommandEncoder();
   const textureView = context.getCurrentTexture().createView();
 
