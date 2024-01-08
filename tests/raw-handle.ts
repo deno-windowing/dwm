@@ -6,18 +6,17 @@ if (!shaderFile) {
   Deno.exit(1);
 }
 
-const width = 512;
-const height = 512;
-
 const adapter = await navigator.gpu.requestAdapter();
 const device = await adapter!.requestDevice();
 
 const window = createWindow({
   title: "Deno Window Manager",
-  width,
-  height,
+  width: 512,
+  height: 512,
   resizable: true,
 });
+
+const { width, height } = window.framebufferSize;
 
 const [system, windowHandle, displayHandle] = window.rawHandle();
 

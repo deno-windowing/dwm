@@ -281,6 +281,7 @@ const symbols = {
   glfwGetWGLContext: {
     parameters: ["pointer"],
     result: "pointer",
+    optional: true,
   },
   glfwGetCocoaMonitor: {
     parameters: ["pointer"],

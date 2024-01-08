@@ -602,6 +602,18 @@ const dropCallback = new Deno.UnsafeCallback(
   },
 );
 
+const objc = Deno.build.os === "darwin" ? Deno.dlopen("libobjc.dylib", {
+  objc_msgSend_contentView: {
+    parameters: ["pointer", "pointer"],
+    result: "pointer",
+    name: "objc_msgSend",
+  },
+  sel_registerName: {
+    parameters: ["buffer"],
+    result: "pointer",
+  },
+}).symbols : undefined;
+
 export class WindowGlfw extends DwmWindow {
   #nativeHandle: Deno.PointerValue;
   #title = "";
@@ -1067,8 +1079,10 @@ export class WindowGlfw extends DwmWindow {
       case "darwin":
         platform = "cocoa";
         handle = ffi.glfwGetCocoaWindow!(this.#nativeHandle);
-        // TODO: Implement
-        display = null;
+        display = objc!.objc_msgSend_contentView(
+          handle,
+          objc!.sel_registerName(cstr("contentView")),
+        );
         break;
       case "windows": {
         platform = "win32";
