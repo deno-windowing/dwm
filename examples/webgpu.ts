@@ -1,11 +1,5 @@
 import { createWindow, mainloop } from "../mod.ts";
 
-const shaderFile = Deno.args[0];
-if (!shaderFile) {
-  console.error("No shader file provided");
-  Deno.exit(1);
-}
-
 const adapter = await navigator.gpu.requestAdapter();
 const device = await adapter!.requestDevice();
 
@@ -24,20 +18,15 @@ console.log("System: ", system);
 console.log("Window: ", windowHandle);
 console.log("Display: ", displayHandle);
 
-// @ts-expect-error TODO
-const context = createWindowSurface(system, windowHandle, displayHandle);
+const surface = new Deno.UnsafeWindowSurface(
+  system,
+  windowHandle,
+  displayHandle,
+);
+const context = surface.getContext("webgpu");
 
 let pipeline: GPURenderPipeline;
 
-const fragPrelude = `
-struct Uniforms {
-    mouse: vec2f,
-    clicked: f32,
-    frame: f32,
-};
-
-@group(0) @binding(0) var<uniform> shaderplay: Uniforms;
-`;
 const uniformLength = 5;
 
 let uniformValues: Float32Array,
@@ -45,14 +34,34 @@ let uniformValues: Float32Array,
   uniformBuffer: GPUBuffer;
 
 function createPipeline() {
-  let shader = Deno.readTextFileSync(shaderFile);
   const fragEntry = "fs_main";
 
-  shader = `${fragPrelude}\n${shader}`;
-
   const shaderModule = device.createShaderModule({
-    code: shader,
-    label: shaderFile,
+    code: `
+  struct Uniforms {
+      mouse: vec2f,
+      clicked: f32,
+      frame: f32,
+  };
+  
+  @group(0) @binding(0) var<uniform> shaderplay: Uniforms;
+  \n$struct VertexInput {
+      @builtin(vertex_index) vertex_index: u32,
+  };
+  
+  @vertex
+  fn vs_main(in: VertexInput) -> @builtin(position) vec4<f32> {
+      let x = f32(i32(in.vertex_index) - 1);
+      let y = f32(i32(in.vertex_index & 1u) * 2 - 1);
+      return vec4<f32>(x, y, 0.0, 1.0);
+  }
+  
+  @fragment
+  fn fs_main(@builtin(position) pos: vec4<f32>) -> @location(0) vec4<f32> {
+      return vec4<f32>(1.0, 0.0, 0.0, 1.0);
+  }
+  `,
+    label: "example",
   });
 
   const bindGroupLayout = device.createBindGroupLayout({
@@ -113,17 +122,7 @@ createPipeline();
 context.configure({
   device,
   format: "bgra8unorm",
-  width,
-  height,
 });
-
-(async () => {
-  const wacher = Deno.watchFs(shaderFile);
-  for await (const _event of wacher) {
-    console.log("Shader changed, reloading...");
-    createPipeline();
-  }
-})();
 
 addEventListener("mousemove", (evt) => {
   uniformValues[0] = evt.clientX / width;
@@ -163,5 +162,5 @@ await mainloop(() => {
   renderPass.end();
 
   device.queue.submit([commandEncoder.finish()]);
-  context.present();
+  surface.present();
 }, false);

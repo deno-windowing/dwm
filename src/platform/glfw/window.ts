@@ -62,7 +62,7 @@ import {
 } from "./constants.ts";
 import { cstr, ffi } from "./ffi.ts";
 import { MonitorGlfw } from "./monitor.ts";
-import SCANCODE_WIN from "./scancode_win.json" assert { type: "json" };
+import SCANCODE_WIN from "./scancode_win.json" with { type: "json" };
 
 const {
   glfwInit,
@@ -602,17 +602,19 @@ const dropCallback = new Deno.UnsafeCallback(
   },
 );
 
-const objc = Deno.build.os === "darwin" ? Deno.dlopen("libobjc.dylib", {
-  objc_msgSend_contentView: {
-    parameters: ["pointer", "pointer"],
-    result: "pointer",
-    name: "objc_msgSend",
-  },
-  sel_registerName: {
-    parameters: ["buffer"],
-    result: "pointer",
-  },
-}).symbols : undefined;
+const objc = Deno.build.os === "darwin"
+  ? Deno.dlopen("libobjc.dylib", {
+    objc_msgSend_contentView: {
+      parameters: ["pointer", "pointer"],
+      result: "pointer",
+      name: "objc_msgSend",
+    },
+    sel_registerName: {
+      parameters: ["buffer"],
+      result: "pointer",
+    },
+  }).symbols
+  : undefined;
 
 export class WindowGlfw extends DwmWindow {
   #nativeHandle: Deno.PointerValue;
@@ -1069,8 +1071,8 @@ export class WindowGlfw extends DwmWindow {
 
   rawHandle(): [
     RawPlatform,
-    Deno.PointerValue<unknown>,
-    Deno.PointerValue<unknown>,
+    Deno.UnsafePointerView,
+    Deno.UnsafePointerView | null,
   ] {
     let platform: RawPlatform;
     let handle: Deno.PointerValue<unknown>;
@@ -1103,20 +1105,18 @@ export class WindowGlfw extends DwmWindow {
       case "illumos":
       case "netbsd":
       case "solaris":
-        if (ffi.glfwGetWaylandWindow && ffi.glfwGetWaylandDisplay) {
-          platform = "wayland";
-          handle = ffi.glfwGetWaylandWindow(this.#nativeHandle);
-          display = ffi.glfwGetWaylandDisplay();
-        } else {
-          platform = "x11";
-          handle = ffi.glfwGetX11Window!(this.#nativeHandle);
-          display = ffi.glfwGetX11Display!();
-        }
+        platform = "x11";
+        handle = ffi.glfwGetX11Window!(this.#nativeHandle);
+        display = ffi.glfwGetX11Display!();
         break;
       default:
         throw new Error(`Unsupported platform: ${Deno.build.os}`);
     }
-    return [platform, handle, display];
+    return [
+      platform,
+      new Deno.UnsafePointerView(handle!),
+      display == null ? null : new Deno.UnsafePointerView(display),
+    ];
   }
   close() {
     this.#closed = true;

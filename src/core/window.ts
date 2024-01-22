@@ -322,8 +322,8 @@ export abstract class DwmWindow {
    */
   abstract rawHandle(): [
     RawPlatform,
-    Deno.PointerValue,
-    Deno.PointerValue,
+    Deno.UnsafePointerView,
+    Deno.UnsafePointerView | null,
   ];
 
   /**
