@@ -45,7 +45,7 @@ function createPipeline() {
   };
   
   @group(0) @binding(0) var<uniform> shaderplay: Uniforms;
-  \n$struct VertexInput {
+  $struct VertexInput {
       @builtin(vertex_index) vertex_index: u32,
   };
   

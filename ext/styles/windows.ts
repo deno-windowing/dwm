@@ -9,7 +9,6 @@ import {
 } from "https://win32.deno.dev/0.4.1/Graphics.Dwm";
 import { DwmWindow } from "../../mod.ts";
 
-
 function applyBlur(win: DwmWindow) {
   DwmEnableBlurBehindWindow(
     ffi.glfwGetWin32Window!(win.nativeHandle),
