@@ -3,7 +3,7 @@ import {
   Canvas,
   CanvasRenderingContext2D,
   createCanvas,
-} from "https://deno.land/x/skia_canvas@0.5.4/mod.ts";
+} from "https://deno.land/x/skia_canvas@0.5.5/mod.ts";
 
 import {
   createWindow,
@@ -12,7 +12,7 @@ import {
   WindowClosedEvent,
   WindowFramebufferSizeEvent,
   WindowRefreshEvent,
-} from "https://deno.land/x/dwm@0.3.3/mod.ts";
+} from "../../mod.ts";
 
 export class WindowCanvas {
   canvas: Canvas;
@@ -84,5 +84,5 @@ export class WindowCanvas {
   }
 }
 
-export * from "https://deno.land/x/skia_canvas@0.5.4/mod.ts";
-export { mainloop } from "https://deno.land/x/dwm@0.3.3/mod.ts";
+export * from "https://deno.land/x/skia_canvas@0.5.5/mod.ts";
+export { mainloop } from "../../mod.ts";
