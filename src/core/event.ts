@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-window
 import { DwmWindow } from "./window.ts";
 
 /**
@@ -256,8 +257,7 @@ export function _cancelAnimationFrameImpl(id: number) {
   animationFrames.delete(id);
 }
 
-// deno-lint-ignore no-window
-Object.assign(window, {
+Object.assign(globalThis, {
   requestAnimationFrame: _requestAnimationFrameImpl,
   cancelAnimationFrame: _cancelAnimationFrameImpl,
 });

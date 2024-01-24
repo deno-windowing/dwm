@@ -1071,8 +1071,8 @@ export class WindowGlfw extends DwmWindow {
 
   #rawHandle(): [
     RawPlatform,
-    Deno.UnsafePointerView,
-    Deno.UnsafePointerView | null,
+    Deno.PointerValue<unknown>,
+    Deno.PointerValue<unknown> | null,
   ] {
     let platform: RawPlatform;
     let handle: Deno.PointerValue<unknown>;
@@ -1114,8 +1114,8 @@ export class WindowGlfw extends DwmWindow {
     }
     return [
       platform,
-      new Deno.UnsafePointerView(handle!),
-      display == null ? null : new Deno.UnsafePointerView(display),
+      handle!,
+      display == null ? null : display,
     ];
   }
 

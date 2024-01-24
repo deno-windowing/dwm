@@ -18,12 +18,12 @@
     "example:capture": "deno run -A --unstable examples/mouse-capture.ts",
     "example:custom_cursor": "deno run -A --unstable examples/custom-cursor.ts",
     "example:custom_icon": "deno run -A --unstable examples/custom-icon.ts",
-    "example:webgpu": "deno run -A --unstable examples/webgpu.ts"
+    "example:webgpu": "deno run -A --unstable-ffi --unstable-webgpu examples/webgpu.ts"
   },
 
   "lint": {
     "rules": {
-      "exclude": ["no-unused-vars", "no-window"]
+      "exclude": ["no-unused-vars"]
     }
   }
 }
