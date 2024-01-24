@@ -315,25 +315,13 @@ export abstract class DwmWindow {
   ): void;
 
   /**
-   * Retrieves the window and display/instance handles required for WebGPU
-   * ```ts
-   * const [window, display, instance] = win.rawHandle();
-   * ```
-   */
-  abstract rawHandle(): [
-    RawPlatform,
-    Deno.UnsafePointerView,
-    Deno.UnsafePointerView | null,
-  ];
-
-  /**
    * Creates a Window Surface for Use with WebGPU
    * ```ts
-   * const surface = win.createWindowSurface();
+   * const surface = win.windowSurface();
    * const context = surface.getContext("webgpu");
    * ```
    */
-  abstract createWindowSurface(): Deno.UnsafeWindowSurface;
+  abstract windowSurface(): Deno.UnsafeWindowSurface;
   /**
    * Check if the window is closed
    */

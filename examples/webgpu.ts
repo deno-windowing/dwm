@@ -12,7 +12,7 @@ const window = createWindow({
 
 const { width, height } = window.framebufferSize;
 
-const surface = window.createWindowSurface();
+const surface = window.windowSurface();
 
 const context = surface.getContext("webgpu");
 

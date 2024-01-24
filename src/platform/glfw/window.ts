@@ -1069,7 +1069,7 @@ export class WindowGlfw extends DwmWindow {
     glfwSetCursorPos(this.#nativeHandle, x, y);
   }
 
-  rawHandle(): [
+  #rawHandle(): [
     RawPlatform,
     Deno.UnsafePointerView,
     Deno.UnsafePointerView | null,
@@ -1119,8 +1119,8 @@ export class WindowGlfw extends DwmWindow {
     ];
   }
 
-  createWindowSurface() {
-    const [platform, handle, display] = this.rawHandle();
+  windowSurface() {
+    const [platform, handle, display] = this.#rawHandle();
     return new Deno.UnsafeWindowSurface(platform, handle, display);
   }
 
