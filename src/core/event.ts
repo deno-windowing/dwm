@@ -243,27 +243,8 @@ export class WindowDropEvent extends WindowEvent {
 
 export type AnimationFrameCallback = (time: number) => unknown;
 export const animationFrames = new Map<number, AnimationFrameCallback>();
-let animationFrameId = 0;
-
-export function requestAnimationFrameImpl(callback: AnimationFrameCallback) {
-  animationFrameId++;
-  animationFrames.set(animationFrameId, callback);
-  return animationFrameId;
-}
-
-export function cancelAnimationFrameImpl(id: number) {
-  animationFrames.delete(id);
-}
-
-Object.assign(window, {
-  requestAnimationFrame: requestAnimationFrameImpl,
-  cancelAnimationFrame: cancelAnimationFrameImpl,
-});
 
 declare global {
-  const requestAnimationFrame: typeof requestAnimationFrameImpl;
-  const cancelAnimationFrame: typeof cancelAnimationFrameImpl;
-
   interface WindowEventMap {
     close: WindowCloseEvent;
     closed: WindowClosedEvent;

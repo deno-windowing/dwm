@@ -17,6 +17,7 @@ import {
   WindowResizeEvent,
   WindowScrollEvent,
 } from "../../core/event.ts";
+import { RawPlatform } from "../../core/mod.ts";
 import { DwmMonitor } from "../../core/monitor.ts";
 import {
   CreateWindowOptions,
@@ -61,7 +62,7 @@ import {
 } from "./constants.ts";
 import { cstr, ffi } from "./ffi.ts";
 import { MonitorGlfw } from "./monitor.ts";
-import SCANCODE_WIN from "./scancode_win.json" assert { type: "json" };
+import SCANCODE_WIN from "./scancode_win.json" with { type: "json" };
 
 const {
   glfwInit,
@@ -601,6 +602,20 @@ const dropCallback = new Deno.UnsafeCallback(
   },
 );
 
+const objc = Deno.build.os === "darwin"
+  ? Deno.dlopen("libobjc.dylib", {
+    objc_msgSend_contentView: {
+      parameters: ["pointer", "pointer"],
+      result: "pointer",
+      name: "objc_msgSend",
+    },
+    sel_registerName: {
+      parameters: ["buffer"],
+      result: "pointer",
+    },
+  }).symbols
+  : undefined;
+
 export class WindowGlfw extends DwmWindow {
   #nativeHandle: Deno.PointerValue;
   #title = "";
@@ -1052,6 +1067,61 @@ export class WindowGlfw extends DwmWindow {
 
   setCursorPos(x: number, y: number) {
     glfwSetCursorPos(this.#nativeHandle, x, y);
+  }
+
+  #rawHandle(): [
+    RawPlatform,
+    Deno.UnsafePointerView,
+    Deno.UnsafePointerView | null,
+  ] {
+    let platform: RawPlatform;
+    let handle: Deno.PointerValue<unknown>;
+    let display: Deno.PointerValue<unknown>;
+    switch (Deno.build.os) {
+      case "darwin":
+        platform = "cocoa";
+        handle = ffi.glfwGetCocoaWindow!(this.#nativeHandle);
+        display = objc!.objc_msgSend_contentView(
+          handle,
+          objc!.sel_registerName(cstr("contentView")),
+        );
+        break;
+      case "windows": {
+        platform = "win32";
+        const kernel32 = Deno.dlopen("kernel32.dll", {
+          GetModuleHandleW: {
+            parameters: ["pointer"],
+            result: "pointer",
+          },
+        });
+        handle = ffi.glfwGetWin32Window!(this.#nativeHandle);
+        display = kernel32.symbols.GetModuleHandleW(null);
+        kernel32.close();
+        break;
+      }
+      case "linux":
+      case "aix":
+      case "freebsd":
+      case "illumos":
+      case "netbsd":
+      case "solaris":
+        platform = "x11";
+        handle = ffi.glfwGetX11Window!(this.#nativeHandle);
+        display = ffi.glfwGetX11Display!();
+        break;
+      default:
+        throw new Error(`Unsupported platform: ${Deno.build.os}`);
+    }
+    return [
+      platform,
+      new Deno.UnsafePointerView(handle!),
+      display == null ? null : new Deno.UnsafePointerView(display),
+    ];
+  }
+
+  windowSurface() {
+    const [platform, handle, display] = this.#rawHandle();
+    return new Deno.UnsafeWindowSurface(platform, handle, display);
   }
 
   close() {

@@ -17,7 +17,7 @@ import {
   createWindow,
   getProcAddress,
   mainloop,
-} from "https://deno.land/x/dwm@0.3.3/mod.ts";
+} from "https://deno.land/x/dwm@0.3.4/mod.ts";
 import * as gl from "https://deno.land/x/gluten@0.1.3/api/gles23.2.ts";
 
 const window = createWindow({
@@ -51,7 +51,7 @@ await mainloop(frame);
 import {
   mainloop,
   WindowCanvas,
-} from "https://deno.land/x/dwm@0.3.3/ext/canvas.ts";
+} from "https://deno.land/x/dwm@0.3.4/ext/canvas.ts";
 
 const canvas = new WindowCanvas({
   title: "Skia Canvas",
@@ -99,10 +99,10 @@ deno run --unstable --allow-ffi --allow-write --allow-env <file>
 ## Maintainers
 
 - Dj ([@DjDeveloperr](https://github.com/DjDeveloperr))
-- Loading ([@load1n9](https://github.com/load1n9))
+- Dean Srebnik ([@load1n9](https://github.com/load1n9))
 
 ## License
 
 [Apache-2.0](./LICENSE) licensed.
 
-Copyright 2023 © The Deno Windowing Team
+Copyright 2024 © The Deno Windowing Team

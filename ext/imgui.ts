@@ -1,7 +1,7 @@
 // deno-lint-ignore-file no-explicit-any
 import { DwmWindow } from "../mod.ts";
-import * as imgui from "https://raw.githubusercontent.com/djfos/dimgui/main/src/call.ts";
-export * from "https://raw.githubusercontent.com/djfos/dimgui/main/src/type.ts";
+import * as imgui from "https://raw.githubusercontent.com/deno-windowing/dimgui/main/src/call.ts";
+export * from "https://raw.githubusercontent.com/deno-windowing/dimgui/main/src/type.ts";
 
 export function createContext(window: DwmWindow) {
   const imguiContext = imgui.createContext();

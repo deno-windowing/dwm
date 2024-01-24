@@ -17,7 +17,8 @@
     "example:window": "deno run -A --unstable examples/window.ts",
     "example:capture": "deno run -A --unstable examples/mouse-capture.ts",
     "example:custom_cursor": "deno run -A --unstable examples/custom-cursor.ts",
-    "example:custom_icon": "deno run -A --unstable examples/custom-icon.ts"
+    "example:custom_icon": "deno run -A --unstable examples/custom-icon.ts",
+    "example:webgpu": "deno run -A --unstable examples/webgpu.ts"
   },
 
   "lint": {

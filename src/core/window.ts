@@ -1,4 +1,5 @@
 import { ImageStruct, LTRB, Position, Size } from "./common.ts";
+import { RawPlatform } from "./mod.ts";
 import { DwmMonitor } from "./monitor.ts";
 
 export interface CreateWindowOptions {
@@ -313,6 +314,14 @@ export abstract class DwmWindow {
     image: ImageStruct,
   ): void;
 
+  /**
+   * Creates a Window Surface for Use with WebGPU
+   * ```ts
+   * const surface = win.windowSurface();
+   * const context = surface.getContext("webgpu");
+   * ```
+   */
+  abstract windowSurface(): Deno.UnsafeWindowSurface;
   /**
    * Check if the window is closed
    */
