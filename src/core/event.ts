@@ -244,6 +244,24 @@ export class WindowDropEvent extends WindowEvent {
 export type AnimationFrameCallback = (time: number) => unknown;
 export const animationFrames = new Map<number, AnimationFrameCallback>();
 
+let animationFrameId = 0;
+
+export function _requestAnimationFrameImpl(callback: AnimationFrameCallback) {
+  animationFrameId++;
+  animationFrames.set(animationFrameId, callback);
+  return animationFrameId;
+}
+
+export function _cancelAnimationFrameImpl(id: number) {
+  animationFrames.delete(id);
+}
+
+// deno-lint-ignore no-window
+Object.assign(window, {
+  requestAnimationFrame: _requestAnimationFrameImpl,
+  cancelAnimationFrame: _cancelAnimationFrameImpl,
+});
+
 declare global {
   interface WindowEventMap {
     close: WindowCloseEvent;
