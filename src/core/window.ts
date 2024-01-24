@@ -327,6 +327,14 @@ export abstract class DwmWindow {
   ];
 
   /**
+   * Creates a Window Surface for Use with WebGPU
+   * ```ts
+   * const surface = win.createWindowSurface();
+   * const context = surface.getContext("webgpu");
+   * ```
+   */
+  abstract createWindowSurface(): Deno.UnsafeWindowSurface;
+  /**
    * Check if the window is closed
    */
   abstract readonly closed: boolean;

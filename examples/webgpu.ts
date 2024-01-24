@@ -12,17 +12,8 @@ const window = createWindow({
 
 const { width, height } = window.framebufferSize;
 
-const [system, windowHandle, displayHandle] = window.rawHandle();
+const surface = window.createWindowSurface();
 
-console.log("System: ", system);
-console.log("Window: ", windowHandle);
-console.log("Display: ", displayHandle);
-
-const surface = new Deno.UnsafeWindowSurface(
-  system,
-  windowHandle,
-  displayHandle,
-);
 const context = surface.getContext("webgpu");
 
 let pipeline: GPURenderPipeline;

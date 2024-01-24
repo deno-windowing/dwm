@@ -1118,6 +1118,12 @@ export class WindowGlfw extends DwmWindow {
       display == null ? null : new Deno.UnsafePointerView(display),
     ];
   }
+
+  createWindowSurface() {
+    const [platform, handle, display] = this.rawHandle();
+    return new Deno.UnsafeWindowSurface(platform, handle, display);
+  }
+  
   close() {
     this.#closed = true;
     dispatchEvent(new WindowClosedEvent(this));
