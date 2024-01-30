@@ -19,7 +19,9 @@
     "example:custom_cursor": "deno run -A --unstable examples/custom-cursor.ts",
     "example:custom_icon": "deno run -A --unstable examples/custom-icon.ts",
     "example:webgpu": "deno run -A --unstable-ffi --unstable-webgpu examples/webgpu.ts",
-    "example:webgpu-triangle": "deno run -A --unstable-ffi --unstable-webgpu examples/webgpu-triangle.ts"
+    "example:webgpu-triangle": "deno run -A --unstable-ffi --unstable-webgpu examples/webgpu-triangle.ts",
+    "example:webgpu-cube": "deno run -A --unstable-ffi --unstable-webgpu examples/webgpu-cube.ts",
+    "example:webgpu-cube-floating": "deno run -A --unstable-ffi --unstable-webgpu examples/webgpu-cube-floating.ts"
   },
 
   "lint": {
