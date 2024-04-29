@@ -1,4 +1,5 @@
 import { Canvas, CanvasRenderingContext2D, createCanvas } from "jsr:@gfx/canvas@0.5.6";
+// FIXME: https://stackoverflow.com/a/77075793/1363247
 
 import {
   createWindow,
