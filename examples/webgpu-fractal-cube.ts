@@ -114,7 +114,7 @@ context.configure({
   device,
   format: presentationFormat,
   usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC,
-//   alphaMode: "premultiplied",
+  //   alphaMode: "premultiplied",
   width,
   height,
 });
