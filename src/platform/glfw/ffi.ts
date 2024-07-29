@@ -28,7 +28,6 @@ const symbols = {
   glfwMakeContextCurrent: {
     parameters: ["pointer"],
     result: "void",
-    callback: true,
   },
   glfwGetProcAddress: {
     parameters: ["buffer"],
@@ -41,7 +40,6 @@ const symbols = {
   glfwSwapBuffers: {
     parameters: ["pointer"],
     result: "void",
-    callback: true,
   },
   glfwSwapInterval: {
     parameters: ["i32"],
@@ -50,7 +48,6 @@ const symbols = {
   glfwPollEvents: {
     parameters: [],
     result: "void",
-    callback: true,
   },
   glfwSetCursorPosCallback: {
     parameters: ["pointer", "function"],
@@ -67,17 +64,14 @@ const symbols = {
   glfwSetWindowAttrib: {
     parameters: ["pointer", "i32", "i32"],
     result: "void",
-    callback: true,
   },
   glfwFocusWindow: {
     parameters: ["pointer"],
     result: "void",
-    callback: true,
   },
   glfwSetWindowIcon: {
     parameters: ["pointer", "i32", "buffer"],
     result: "void",
-    callback: true,
   },
   glfwGetWindowPos: {
     parameters: ["pointer", "buffer", "buffer"],
@@ -86,7 +80,6 @@ const symbols = {
   glfwSetWindowPos: {
     parameters: ["pointer", "i32", "i32"],
     result: "void",
-    callback: true,
   },
   glfwGetWindowSize: {
     parameters: ["pointer", "buffer", "buffer"],
@@ -99,12 +92,10 @@ const symbols = {
   glfwSetWindowAspectRatio: {
     parameters: ["pointer", "i32", "i32"],
     result: "void",
-    callback: true,
   },
   glfwSetWindowSize: {
     parameters: ["pointer", "i32", "i32"],
     result: "void",
-    callback: true,
   },
   glfwGetFramebufferSize: {
     parameters: ["pointer", "buffer", "buffer"],
@@ -125,37 +116,30 @@ const symbols = {
   glfwSetWindowOpacity: {
     parameters: ["pointer", "f32"],
     result: "void",
-    callback: true,
   },
   glfwIconifyWindow: {
     parameters: ["pointer"],
     result: "void",
-    callback: true,
   },
   glfwRestoreWindow: {
     parameters: ["pointer"],
     result: "void",
-    callback: true,
   },
   glfwMaximizeWindow: {
     parameters: ["pointer"],
     result: "void",
-    callback: true,
   },
   glfwShowWindow: {
     parameters: ["pointer"],
     result: "void",
-    callback: true,
   },
   glfwHideWindow: {
     parameters: ["pointer"],
     result: "void",
-    callback: true,
   },
   glfwRequestWindowAttention: {
     parameters: ["pointer"],
     result: "void",
-    callback: true,
   },
   glfwSetWindowPosCallback: {
     parameters: ["pointer", "function"],
@@ -224,7 +208,6 @@ const symbols = {
   glfwSetCursor: {
     parameters: ["pointer", "pointer"],
     result: "void",
-    callback: true,
   },
   glfwCreateStandardCursor: {
     parameters: ["i32"],
@@ -241,7 +224,6 @@ const symbols = {
   glfwWaitEvents: {
     parameters: [],
     result: "void",
-    callback: true,
   },
   glfwVulkanSupported: {
     parameters: [],
@@ -402,7 +384,6 @@ const symbols = {
   glfwSetWindowMonitor: {
     parameters: ["pointer", "pointer", "i32", "i32", "i32", "i32", "i32"],
     result: "void",
-    callback: true,
   },
   glfwSetInputMode: {
     name: "glfwSetInputMode",

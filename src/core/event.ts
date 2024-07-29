@@ -1,4 +1,4 @@
-// deno-lint-ignore-file no-window
+// deno-lint-ignore-file no-var
 import { DwmWindow } from "./window.ts";
 
 /**
@@ -263,6 +263,15 @@ Object.assign(globalThis, {
 });
 
 declare global {
+  /** Framebuffer height of active window */
+  var innerHeight: number;
+  /** Framebuffer width of active window */
+  var innerWidth: number;
+  var devicePixelRatio: number;
+
+  function requestAnimationFrame(callback: AnimationFrameCallback): number;
+  function cancelAnimationFrame(id: number): void;
+
   interface WindowEventMap {
     close: WindowCloseEvent;
     closed: WindowClosedEvent;

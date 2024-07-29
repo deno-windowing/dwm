@@ -35,8 +35,8 @@ await mainloop(() => {
       {
         view: textureView,
         clearValue: { r, g, b, a: 1.0 },
-        loadOp: "clear",
-        storeOp: "store",
+        loadOp: "clear" as const,
+        storeOp: "store" as const,
       },
     ],
   };

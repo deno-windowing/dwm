@@ -592,9 +592,7 @@ const dropCallback = new Deno.UnsafeCallback(
       const out = [];
       const view = new Deno.UnsafePointerView(paths!);
       for (let i = 0; i < count; i++) {
-        const path = Deno.UnsafePointer.create(
-          Number(view.getBigUint64(i * 8)),
-        );
+        const path = Deno.UnsafePointer.create(view.getBigUint64(i * 8));
         out.push(Deno.UnsafePointerView.getCString(path!));
       }
       dispatchEvent(new WindowDropEvent(window, out));
@@ -956,9 +954,7 @@ export class WindowGlfw extends DwmWindow {
     if (result !== 0) {
       throw new Error(`Failed to create surface: ${result}`);
     }
-    return Deno.UnsafePointer.create(
-      surfaceOut[0] < MAX_SAFE_INT ? Number(surfaceOut[0]) : surfaceOut[0],
-    );
+    return Deno.UnsafePointer.create(surfaceOut[0]);
   }
 
   getMonitor(): DwmMonitor | undefined {
@@ -1137,6 +1133,52 @@ export class WindowGlfw extends DwmWindow {
     }
   }
 }
+
+Object.defineProperties(globalThis, {
+  innerWidth: {
+    get() {
+      const window = WINDOWS.values().next().value as WindowGlfw;
+      return window ? window.framebufferSize.width : 0;
+    },
+  },
+
+  innerHeight: {
+    get() {
+      const window = WINDOWS.values().next().value as WindowGlfw;
+      return window ? window.framebufferSize.height : 0;
+    },
+  },
+
+  offsetWidth: {
+    get() {
+      return this.innerWidth;
+    },
+  },
+
+  offsetHeight: {
+    get() {
+      return this.innerHeight;
+    },
+  },
+
+  offsetTop: {
+    get() {
+      return 0;
+    },
+  },
+
+  offsetLeft: {
+    get() {
+      return 0;
+    },
+  },
+
+  devicePixelRatio: {
+    get() {
+      return 1;
+    },
+  },
+});
 
 export async function mainloop(
   cb?: (hrtime: number) => unknown,
