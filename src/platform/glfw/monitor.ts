@@ -96,7 +96,7 @@ export class MonitorGlfw extends DwmMonitor {
       modes.push(
         readVideoMode(
           Deno.UnsafePointer.create(
-            BigInt(Deno.UnsafePointer.value(ptr)) + BigInt(i) * 24n,
+            Deno.UnsafePointer.value(ptr) + BigInt(i) * 24n,
           ),
         ),
       );
