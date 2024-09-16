@@ -2,7 +2,7 @@ import {
   Canvas,
   CanvasRenderingContext2D,
   createCanvas,
-} from "https://deno.land/x/skia_canvas@0.5.5/mod.ts";
+} from "jsr:@gfx/canvas@0.5.6";
 
 import {
   createWindow,
@@ -86,4 +86,4 @@ export class WindowCanvas {
 export * from "../mod.ts";
 // deno-lint-ignore ban-ts-comment
 // @ts-expect-error
-export * from "https://deno.land/x/skia_canvas@0.5.5/mod.ts";
+export * from "jsr:@gfx/canvas@0.5.6";
