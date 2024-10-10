@@ -75,8 +75,6 @@ const context = surface.getContext("webgpu");
 context.configure({
   device,
   format: "bgra8unorm",
-  width,
-  height,
 });
 
 const verticesBuffer = device.createBuffer({

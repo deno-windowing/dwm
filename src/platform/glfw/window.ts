@@ -1117,7 +1117,13 @@ export class WindowGlfw extends DwmWindow {
 
   windowSurface() {
     const [platform, handle, display] = this.#rawHandle();
-    return new Deno.UnsafeWindowSurface(platform, handle, display);
+    return new Deno.UnsafeWindowSurface({
+      system: platform,
+      windowHandle: handle,
+      displayHandle: display,
+      width: this.size.width,
+      height: this.size.height,
+    });
   }
 
   close() {
