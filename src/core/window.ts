@@ -112,7 +112,7 @@ export abstract class DwmWindow {
   /**
    * Window's unique identifier
    */
-  id = crypto.randomUUID();
+  id: `${string}-${string}-${string}-${string}-${string}` = crypto.randomUUID();
 
   /**
    * The window's pointer

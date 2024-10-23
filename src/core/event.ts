@@ -23,7 +23,7 @@ export class WindowEvent extends Event {
 
   declare window: DwmWindow;
 
-  match(window: DwmWindow) {
+  match(window: DwmWindow): boolean {
     return window.id === this.window.id;
   }
 }
@@ -187,19 +187,19 @@ export class WindowMouseEvent extends WindowEvent {
     });
   }
 
-  get x() {
+  get x(): number {
     return this.clientX;
   }
 
-  get y() {
+  get y(): number {
     return this.clientY;
   }
 
-  get pageX() {
+  get pageX(): number {
     return this.clientX;
   }
 
-  get pageY() {
+  get pageY(): number {
     return this.clientY;
   }
 }
@@ -242,11 +242,16 @@ export class WindowDropEvent extends WindowEvent {
 }
 
 export type AnimationFrameCallback = (time: number) => unknown;
-export const animationFrames = new Map<number, AnimationFrameCallback>();
+export const animationFrames: Map<number, AnimationFrameCallback> = new Map<
+  number,
+  AnimationFrameCallback
+>();
 
 let animationFrameId = 0;
 
-export function _requestAnimationFrameImpl(callback: AnimationFrameCallback) {
+export function _requestAnimationFrameImpl(
+  callback: AnimationFrameCallback,
+): number {
   animationFrameId++;
   animationFrames.set(animationFrameId, callback);
   return animationFrameId;
