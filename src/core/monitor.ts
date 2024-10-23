@@ -1,4 +1,4 @@
-import { Position, Rect, Size } from "./common.ts";
+import type { Position, Rect, Size } from "./common.ts";
 
 export interface VideoMode {
   width: number;

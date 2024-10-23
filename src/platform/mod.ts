@@ -1,5 +1,5 @@
-import { Platform } from "../core/platform.ts";
-import { CreateWindowOptions } from "../core/window.ts";
+import type { Platform } from "../core/platform.ts";
+import type { CreateWindowOptions } from "../core/window.ts";
 import Glfw from "./glfw/platform.ts";
 
 let platform: Platform;

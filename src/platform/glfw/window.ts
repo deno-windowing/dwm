@@ -1,4 +1,4 @@
-import { ImageStruct, Position, Size } from "../../core/common.ts";
+import type { ImageStruct, Position, Size } from "../../core/common.ts";
 import {
   animationFrames,
   EventLoop,
@@ -17,15 +17,15 @@ import {
   WindowResizeEvent,
   WindowScrollEvent,
 } from "../../core/event.ts";
-import { RawPlatform } from "../../core/mod.ts";
-import { DwmMonitor } from "../../core/monitor.ts";
-import {
+import type { RawPlatform } from "../../core/mod.ts";
+import type { DwmMonitor } from "../../core/monitor.ts";
+import type {
   CreateWindowOptions,
   CursorIcon,
-  DwmWindow,
   InputMode,
   InputModeValue,
 } from "../../core/window.ts";
+import { DwmWindow } from "../../core/window.ts";
 import {
   GLFW_ARROW_CURSOR,
   GLFW_CLIENT_API,
@@ -56,7 +56,7 @@ import {
   GLFW_STICKY_KEYS,
   GLFW_STICKY_MOUSE_BUTTONS,
   GLFW_TRANSPARENT_FRAMEBUFFER,
-  GLFW_TRUE,
+  // GLFW_TRUE,
   GLFW_VISIBLE,
   GLFW_VRESIZE_CURSOR,
 } from "./constants.ts";

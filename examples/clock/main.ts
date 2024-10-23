@@ -1,8 +1,8 @@
 // thank you to https://github.com/nhrones/SkiaClock for the original code
 
-import { mainloop, WindowCanvas } from "./window.ts";
+import { mainloop, WindowCanvas } from "../../ext/canvas.ts";
 import {
-  ClockNumber,
+  type ClockNumber,
   createNumber,
   MatrixHeight,
   MatrixWidth,

@@ -1,5 +1,4 @@
-// deno-lint-ignore-file no-var
-import { DwmWindow } from "./window.ts";
+import type { DwmWindow } from "./window.ts";
 
 /**
  * Event Loop class
@@ -33,7 +32,7 @@ export class WindowEvent extends Event {
  * Event triggered when a window requested to close
  */
 export class WindowCloseEvent extends WindowEvent {
-  constructor(public window: DwmWindow) {
+  constructor(public override window: DwmWindow) {
     super("close", {
       cancelable: true,
     });
@@ -44,7 +43,7 @@ export class WindowCloseEvent extends WindowEvent {
  * Event triggered when a window is closed
  */
 export class WindowClosedEvent extends WindowEvent {
-  constructor(public window: DwmWindow) {
+  constructor(public override window: DwmWindow) {
     super("closed", {
       cancelable: true,
     });
@@ -56,7 +55,7 @@ export class WindowClosedEvent extends WindowEvent {
  */
 export class WindowResizeEvent extends WindowEvent {
   constructor(
-    public window: DwmWindow,
+    public override window: DwmWindow,
     public width: number,
     public height: number,
   ) {
@@ -69,7 +68,7 @@ export class WindowResizeEvent extends WindowEvent {
  */
 export class WindowFramebufferSizeEvent extends WindowEvent {
   constructor(
-    public window: DwmWindow,
+    public override window: DwmWindow,
     public width: number,
     public height: number,
   ) {
@@ -82,7 +81,7 @@ export class WindowFramebufferSizeEvent extends WindowEvent {
  */
 export class WindowMoveEvent extends WindowEvent {
   constructor(
-    public window: DwmWindow,
+    public override window: DwmWindow,
     public x: number,
     public y: number,
   ) {
@@ -94,7 +93,7 @@ export class WindowMoveEvent extends WindowEvent {
  * Event triggered when a window is refreshed
  */
 export class WindowRefreshEvent extends WindowEvent {
-  constructor(public window: DwmWindow) {
+  constructor(public override window: DwmWindow) {
     super("refresh");
   }
 }
@@ -103,7 +102,7 @@ export class WindowRefreshEvent extends WindowEvent {
  * Event triggered when a window is focused
  */
 export class WindowFocusEvent extends WindowEvent {
-  constructor(public window: DwmWindow, public focused: boolean) {
+  constructor(public override window: DwmWindow, public focused: boolean) {
     super("focus");
   }
 }
@@ -112,7 +111,7 @@ export class WindowFocusEvent extends WindowEvent {
  * Event triggered when a window is minimized
  */
 export class WindowMinimizeEvent extends WindowEvent {
-  constructor(public window: DwmWindow, public minimized: boolean) {
+  constructor(public override window: DwmWindow, public minimized: boolean) {
     super("minimize");
   }
 }
@@ -121,7 +120,7 @@ export class WindowMinimizeEvent extends WindowEvent {
  * Event triggered when a window is maximized
  */
 export class WindowMaximizeEvent extends WindowEvent {
-  constructor(public window: DwmWindow, public maximized: boolean) {
+  constructor(public override window: DwmWindow, public maximized: boolean) {
     super("maximize");
   }
 }
@@ -130,7 +129,7 @@ export class WindowMaximizeEvent extends WindowEvent {
  * Event triggered when a window requests a redraw event
  */
 export class WindowRedrawRequestedEvent extends WindowEvent {
-  constructor(public window: DwmWindow) {
+  constructor(public override window: DwmWindow) {
     super("redrawRequested");
   }
 }
@@ -141,7 +140,7 @@ export class WindowRedrawRequestedEvent extends WindowEvent {
 export class WindowKeyboardEvent extends WindowEvent {
   constructor(
     name: string,
-    public window: DwmWindow,
+    public override window: DwmWindow,
     public altKey: boolean,
     public code: string,
     public ctrlKey: boolean,
@@ -168,7 +167,7 @@ export class WindowMouseEvent extends WindowEvent {
 
   constructor(
     name: string,
-    public window: DwmWindow,
+    public override window: DwmWindow,
     public altKey: boolean,
     public button: number,
     public buttons: number,
@@ -210,7 +209,7 @@ export class WindowMouseEvent extends WindowEvent {
  */
 export class WindowInputEvent extends WindowEvent {
   constructor(
-    public window: DwmWindow,
+    public override window: DwmWindow,
     public data: string,
   ) {
     super("input");
@@ -222,7 +221,7 @@ export class WindowInputEvent extends WindowEvent {
  */
 export class WindowScrollEvent extends WindowEvent {
   constructor(
-    public window: DwmWindow,
+    public override window: DwmWindow,
     public scrollX: number,
     public scrollY: number,
   ) {
@@ -235,7 +234,7 @@ export class WindowScrollEvent extends WindowEvent {
  */
 export class WindowDropEvent extends WindowEvent {
   constructor(
-    public window: DwmWindow,
+    public override window: DwmWindow,
     public files: string[],
   ) {
     super("drop");
@@ -264,9 +263,12 @@ Object.assign(globalThis, {
 
 declare global {
   /** Framebuffer height of active window */
+  // deno-lint-ignore no-var
   var innerHeight: number;
   /** Framebuffer width of active window */
+  // deno-lint-ignore no-var
   var innerWidth: number;
+  // deno-lint-ignore no-var
   var devicePixelRatio: number;
 
   function requestAnimationFrame(callback: AnimationFrameCallback): number;

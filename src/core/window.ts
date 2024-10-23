@@ -1,6 +1,6 @@
-import { ImageStruct, LTRB, Position, Size } from "./common.ts";
-import { RawPlatform } from "./mod.ts";
-import { DwmMonitor } from "./monitor.ts";
+import type { ImageStruct, LTRB, Position, Size } from "./common.ts";
+import type { RawPlatform } from "./mod.ts";
+import type { DwmMonitor } from "./monitor.ts";
 
 export interface CreateWindowOptions {
   /**

@@ -1,17 +1,15 @@
-import {
-  Canvas,
-  CanvasRenderingContext2D,
-  createCanvas,
-} from "jsr:@gfx/canvas@0.5.6";
+import type { Canvas, CanvasRenderingContext2D } from "jsr:@gfx/canvas@0.5.8";
+import { createCanvas } from "jsr:@gfx/canvas@0.5.8";
 
-import {
-  createWindow,
+import type {
   CreateWindowOptions,
   DwmWindow,
   WindowClosedEvent,
   WindowFramebufferSizeEvent,
   WindowRefreshEvent,
 } from "../mod.ts";
+
+import { createWindow } from "../mod.ts";
 
 export class WindowCanvas {
   canvas: Canvas;
@@ -86,4 +84,4 @@ export class WindowCanvas {
 export * from "../mod.ts";
 // deno-lint-ignore ban-ts-comment
 // @ts-expect-error
-export * from "jsr:@gfx/canvas@0.5.6";
+export * from "jsr:@gfx/canvas@0.5.8";
