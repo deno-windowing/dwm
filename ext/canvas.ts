@@ -1,3 +1,4 @@
+/// <reference types="../types.d.ts" />
 import type { Canvas, CanvasRenderingContext2D } from "jsr:@gfx/canvas@0.5.8";
 import { createCanvas } from "jsr:@gfx/canvas@0.5.8";
 
@@ -42,13 +43,17 @@ export class WindowCanvas {
 
     const onClosed = (evt: WindowClosedEvent) => {
       if (!evt.match(this.window)) return;
-      removeEventListener("framebuffersize", onFramebuffersize);
-      removeEventListener("closed", onClosed);
+      // deno-lint-ignore no-explicit-any
+      removeEventListener("framebuffersize" as any, onFramebuffersize);
+      // deno-lint-ignore no-explicit-any
+      removeEventListener("closed" as any, onClosed);
       this.#toDraw = false;
     };
 
-    addEventListener("framebuffersize", onFramebuffersize);
-    addEventListener("closed", onClosed);
+    // deno-lint-ignore no-explicit-any
+    addEventListener("framebuffersize" as any, onFramebuffersize);
+    // deno-lint-ignore no-explicit-any
+    addEventListener("closed" as any, onClosed);
   }
 
   #resize(width: number, height: number) {
