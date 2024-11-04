@@ -1,4 +1,3 @@
-/// <reference types="../types.d.ts" />
 import type { Canvas, CanvasRenderingContext2D } from "jsr:@gfx/canvas@0.5.8";
 import { createCanvas } from "jsr:@gfx/canvas@0.5.8";
 

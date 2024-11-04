@@ -1,5 +1,3 @@
-/// <reference types="../types.d.ts" />
-
 import type {
   CreateWindowOptions,
   DwmWindow,
