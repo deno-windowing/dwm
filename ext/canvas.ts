@@ -1,17 +1,16 @@
-import {
-  Canvas,
-  CanvasRenderingContext2D,
-  createCanvas,
-} from "jsr:@gfx/canvas@0.5.6";
+/// <reference types="../types.d.ts" />
+import type { Canvas, CanvasRenderingContext2D } from "jsr:@gfx/canvas@0.5.8";
+import { createCanvas } from "jsr:@gfx/canvas@0.5.8";
 
-import {
-  createWindow,
+import type {
   CreateWindowOptions,
   DwmWindow,
   WindowClosedEvent,
   WindowFramebufferSizeEvent,
   WindowRefreshEvent,
 } from "../mod.ts";
+
+import { createWindow } from "../mod.ts";
 
 export class WindowCanvas {
   canvas: Canvas;
@@ -44,13 +43,17 @@ export class WindowCanvas {
 
     const onClosed = (evt: WindowClosedEvent) => {
       if (!evt.match(this.window)) return;
-      removeEventListener("framebuffersize", onFramebuffersize);
-      removeEventListener("closed", onClosed);
+      // deno-lint-ignore no-explicit-any
+      removeEventListener("framebuffersize" as any, onFramebuffersize);
+      // deno-lint-ignore no-explicit-any
+      removeEventListener("closed" as any, onClosed);
       this.#toDraw = false;
     };
 
-    addEventListener("framebuffersize", onFramebuffersize);
-    addEventListener("closed", onClosed);
+    // deno-lint-ignore no-explicit-any
+    addEventListener("framebuffersize" as any, onFramebuffersize);
+    // deno-lint-ignore no-explicit-any
+    addEventListener("closed" as any, onClosed);
   }
 
   #resize(width: number, height: number) {
@@ -86,4 +89,4 @@ export class WindowCanvas {
 export * from "../mod.ts";
 // deno-lint-ignore ban-ts-comment
 // @ts-expect-error
-export * from "jsr:@gfx/canvas@0.5.6";
+export * from "jsr:@gfx/canvas@0.5.8";

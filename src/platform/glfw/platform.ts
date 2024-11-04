@@ -1,4 +1,4 @@
-import { Platform } from "../../core/platform.ts";
+import type { Platform } from "../../core/platform.ts";
 import {
   getInstanceProcAddress,
   getPhysicalDevicePresentationSupport,

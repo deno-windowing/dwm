@@ -1,5 +1,5 @@
 import {
-  CanvasRenderingContext2D,
+  type CanvasRenderingContext2D,
   mainloop,
   WindowCanvas,
 } from "../ext/canvas.ts";

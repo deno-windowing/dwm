@@ -1,5 +1,5 @@
-import { DwmMonitor } from "./monitor.ts";
-import { CreateWindowOptions, DwmWindow } from "./window.ts";
+import type { DwmMonitor } from "./monitor.ts";
+import type { CreateWindowOptions, DwmWindow } from "./window.ts";
 
 export interface Platform {
   /**

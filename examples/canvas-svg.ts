@@ -1,7 +1,6 @@
 import { decode } from "https://deno.land/x/pngs@0.1.1/mod.ts";
 
 import { mainloop, Path2D, WindowCanvas } from "../ext/canvas.ts";
-import { applyDark, applyMicaAlt } from "../ext/styles/mod.ts";
 
 const win = new WindowCanvas({
   title: "Avocado",
@@ -16,9 +15,6 @@ const img = await fetch(
   "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Avocado/3D/avocado_3d.png",
 );
 win.window.setIcon(decode(new Uint8Array(await img.arrayBuffer())));
-
-applyMicaAlt(win.window);
-applyDark(win.window);
 
 win.ctx.scale(15, 15);
 win.onDraw = (ctx) => {

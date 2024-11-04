@@ -1,5 +1,5 @@
-import { Platform } from "../core/platform.ts";
-import { CreateWindowOptions } from "../core/window.ts";
+import type { Platform } from "../core/platform.ts";
+import type { CreateWindowOptions, DwmWindow } from "../core/window.ts";
 import Glfw from "./glfw/platform.ts";
 
 let platform: Platform;
@@ -39,7 +39,7 @@ const {
  * });
  * ```
  */
-export function createWindow(options: CreateWindowOptions) {
+export function createWindow(options: CreateWindowOptions): DwmWindow {
   return new Window(options);
 }
 

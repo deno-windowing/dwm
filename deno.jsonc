@@ -1,16 +1,20 @@
 {
+  "name": "@gfx/dwm",
+  "license": "Apache-2.0",
+  "version": "0.3.8",
+  "exports": {
+    ".": "./mod.ts",
+    "./ext/canvas": "./ext/canvas.ts"
+  },
   "tasks": {
     "example:opengl": "deno run -A --unstable examples/opengl.ts",
     "example:clock": "deno run -A --unstable examples/clock/main.ts",
-    "example:imgui": "deno run -A --unstable examples/imgui.ts",
-    "example:imgui2": "deno run -A --unstable examples/imgui2.ts",
     "example:canvas": "deno run -A --unstable examples/canvas.ts",
     "example:canvas_chart": "deno run -A --unstable examples/canvas-chart.ts",
     "example:canvas_svg": "deno run -A --unstable examples/canvas-svg.ts",
     "example:cursor": "deno run -A --unstable examples/cursor.ts",
     "example:cube": "deno run -A --unstable examples/cube.ts",
     "example:cube2": "deno run -A --unstable examples/cube2.ts",
-    "example:styles": "deno run -A --unstable examples/styles.ts",
     "example:events": "deno run -A --unstable examples/events.ts",
     "example:multi_window": "deno run -A --unstable examples/multi-window.ts",
     "example:transparent": "deno run -A --unstable examples/transparent.ts",
@@ -24,7 +28,6 @@
     "example:webgpu-cube-floating": "deno run -A --unstable-ffi --unstable-webgpu examples/webgpu-cube-floating.ts",
     "example:webgpu-fractal-cube": "deno run -A --unstable-ffi --unstable-webgpu examples/webgpu-fractal-cube.ts"
   },
-
   "lint": {
     "rules": {
       "exclude": ["no-unused-vars"]

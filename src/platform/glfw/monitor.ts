@@ -1,4 +1,4 @@
-import { DwmMonitor, VideoMode } from "../../core/monitor.ts";
+import { DwmMonitor, type VideoMode } from "../../core/monitor.ts";
 import { ffi } from "./ffi.ts";
 
 const {
