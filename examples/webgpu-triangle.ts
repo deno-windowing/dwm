@@ -1,23 +1,16 @@
-import { createWindow, mainloop } from "../mod.ts";
+import { createWindowGPU, mainloop } from "../ext/webgpu.ts";
 
-const adapter = await navigator.gpu.requestAdapter();
-const device = await adapter!.requestDevice();
-
-const window = createWindow({
+const window = await createWindowGPU({
   title: "Deno Window Manager",
   width: 512,
   height: 512,
   resizable: true,
 });
 
-const { width, height } = window.framebufferSize;
-
-const surface = window.windowSurface();
-
-const context = surface.getContext("webgpu");
+const context = window.getContext("webgpu");
 
 context.configure({
-  device,
+  device: window.device,
   format: "bgra8unorm",
 });
 
@@ -35,15 +28,15 @@ fn fs_main() -> @location(0) vec4<f32> {
 }
 `;
 
-const shaderModule = device.createShaderModule({
+const shaderModule = window.device.createShaderModule({
   code: shaderCode,
 });
 
-const pipelineLayout = device.createPipelineLayout({
+const pipelineLayout = window.device.createPipelineLayout({
   bindGroupLayouts: [],
 });
 
-const renderPipeline = device.createRenderPipeline({
+const renderPipeline = window.device.createRenderPipeline({
   layout: pipelineLayout,
   vertex: {
     module: shaderModule,
@@ -60,7 +53,7 @@ const renderPipeline = device.createRenderPipeline({
   },
 });
 mainloop(() => {
-  const encoder = device.createCommandEncoder();
+  const encoder = window.device.createCommandEncoder();
   const texture = context.getCurrentTexture().createView();
   const renderPass = encoder.beginRenderPass({
     colorAttachments: [
@@ -75,6 +68,6 @@ mainloop(() => {
   renderPass.setPipeline(renderPipeline);
   renderPass.draw(3, 1);
   renderPass.end();
-  device.queue.submit([encoder.finish()]);
-  surface.present();
+  window.device.queue.submit([encoder.finish()]);
+  window.surface.present();
 }, false);

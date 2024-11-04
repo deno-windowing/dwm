@@ -265,4 +265,3 @@ Object.assign(globalThis, {
   requestAnimationFrame: _requestAnimationFrameImpl,
   cancelAnimationFrame: _cancelAnimationFrameImpl,
 });
-

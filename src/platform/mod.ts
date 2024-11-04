@@ -8,6 +8,12 @@ switch (Deno.build.os) {
   case "windows":
   case "darwin":
   case "linux":
+  case "freebsd":
+  case "android":
+  case "aix":
+  case "illumos":
+  case "netbsd":
+  case "solaris":
     platform = Glfw;
     break;
   default:

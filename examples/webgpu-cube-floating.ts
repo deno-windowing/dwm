@@ -1,9 +1,6 @@
 // ported from https://github.com/webgpu/webgpu-samples/blob/main/src/sample/rotatingCube/main.ts
 import { mat4, vec3 } from "npm:wgpu-matrix";
-import { createWindow, mainloop } from "../mod.ts";
-
-const adapter = await navigator.gpu.requestAdapter();
-const device = await adapter!.requestDevice();
+import { createWindowGPU, mainloop } from "../ext/webgpu.ts";
 
 const cubeVertexSize = 4 * 10;
 const cubePositionOffset = 0;
@@ -56,7 +53,7 @@ export const cubeVertexArray = new Float32Array([
   -1, 1, -1, 1,  0, 1, 0, 1,  1, 0,
 ]);
 
-const window = createWindow({
+const window = await createWindowGPU({
   title: "Deno Window Manager",
   width: 512,
   height: 512,
@@ -66,18 +63,14 @@ const window = createWindow({
   floating: true,
 });
 
-const { width, height } = window.framebufferSize;
-
-const surface = window.windowSurface();
-
-const context = surface.getContext("webgpu");
+const context = window.getContext("webgpu");
 
 context.configure({
-  device,
+  device: window.device,
   format: "bgra8unorm",
 });
 
-const verticesBuffer = device.createBuffer({
+const verticesBuffer = window.device.createBuffer({
   size: cubeVertexArray.byteLength,
   usage: GPUBufferUsage.VERTEX,
   mappedAtCreation: true,
@@ -85,10 +78,10 @@ const verticesBuffer = device.createBuffer({
 new Float32Array(verticesBuffer.getMappedRange()).set(cubeVertexArray);
 verticesBuffer.unmap();
 
-const pipeline = device.createRenderPipeline({
+const pipeline = window.device.createRenderPipeline({
   layout: "auto",
   vertex: {
-    module: device.createShaderModule({
+    module: window.device.createShaderModule({
       code: `
       struct Uniforms {
           modelViewProjectionMatrix : mat4x4<f32>,
@@ -136,7 +129,7 @@ const pipeline = device.createRenderPipeline({
     ],
   },
   fragment: {
-    module: device.createShaderModule({
+    module: window.device.createShaderModule({
       code: `@fragment
       fn main(
         @location(0) fragUV: vec2<f32>,
@@ -170,19 +163,22 @@ const pipeline = device.createRenderPipeline({
   },
 });
 
-const depthTexture = device.createTexture({
-  size: [width, height],
+const depthTexture = window.device.createTexture({
+  size: [
+    window.window.framebufferSize.width,
+    window.window.framebufferSize.height,
+  ],
   format: "depth24plus",
   usage: GPUTextureUsage.RENDER_ATTACHMENT,
 });
 
 const uniformBufferSize = 4 * 16; // 4x4 matrix
-const uniformBuffer = device.createBuffer({
+const uniformBuffer = window.device.createBuffer({
   size: uniformBufferSize,
   usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
 });
 
-const uniformBindGroup = device.createBindGroup({
+const uniformBindGroup = window.device.createBindGroup({
   layout: pipeline.getBindGroupLayout(0),
   entries: [
     {
@@ -213,7 +209,8 @@ const renderPassDescriptor: GPURenderPassDescriptor = {
     depthStoreOp: "store",
   },
 };
-const aspect = width / height;
+const aspect = window.window.framebufferSize.width /
+  window.window.framebufferSize.height;
 const projectionMatrix = mat4.perspective(
   (2 * Math.PI) / 5,
   aspect,
@@ -240,7 +237,7 @@ function getTransformationMatrix() {
 
 mainloop(() => {
   const transformationMatrix = getTransformationMatrix();
-  device.queue.writeBuffer(
+  window.device.queue.writeBuffer(
     uniformBuffer,
     0,
     transformationMatrix.buffer,
@@ -251,13 +248,13 @@ mainloop(() => {
     .getCurrentTexture()
     .createView();
 
-  const commandEncoder = device.createCommandEncoder();
+  const commandEncoder = window.device.createCommandEncoder();
   const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
   passEncoder.setPipeline(pipeline);
   passEncoder.setBindGroup(0, uniformBindGroup);
   passEncoder.setVertexBuffer(0, verticesBuffer);
   passEncoder.draw(cubeVertexCount);
   passEncoder.end();
-  device.queue.submit([commandEncoder.finish()]);
-  surface.present();
+  window.device.queue.submit([commandEncoder.finish()]);
+  window.surface.present();
 }, false);

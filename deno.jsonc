@@ -1,10 +1,11 @@
 {
   "name": "@gfx/dwm",
   "license": "Apache-2.0",
-  "version": "0.3.8",
+  "version": "0.3.9",
   "exports": {
     ".": "./mod.ts",
-    "./ext/canvas": "./ext/canvas.ts"
+    "./ext/canvas": "./ext/canvas.ts",
+    "./ext/webgpu": "./ext/webgpu.ts"
   },
   "tasks": {
     "example:opengl": "deno run -A --unstable examples/opengl.ts",

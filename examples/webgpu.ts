@@ -1,23 +1,16 @@
-import { createWindow, mainloop } from "../mod.ts";
+import { createWindowGPU, mainloop } from "../ext/webgpu.ts";
 
-const adapter = await navigator.gpu.requestAdapter();
-const device = await adapter!.requestDevice();
-
-const window = createWindow({
+const window = await createWindowGPU({
   title: "Deno Window Manager",
   width: 512,
   height: 512,
   resizable: true,
 });
 
-const { width, height } = window.framebufferSize;
-
-const surface = window.windowSurface();
-
-const context = surface.getContext("webgpu");
+const context = window.getContext("webgpu");
 
 context.configure({
-  device,
+  device: window.device,
   format: "bgra8unorm",
 });
 
@@ -39,10 +32,10 @@ await mainloop(() => {
     ],
   };
 
-  const commandEncoder = device.createCommandEncoder();
+  const commandEncoder = window.device.createCommandEncoder();
   const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
   passEncoder.end();
 
-  device.queue.submit([commandEncoder.finish()]);
-  surface.present();
+  window.device.queue.submit([commandEncoder.finish()]);
+  window.surface.present();
 }, false);

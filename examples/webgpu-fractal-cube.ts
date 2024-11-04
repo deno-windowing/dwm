@@ -1,6 +1,6 @@
 // ported from https://github.com/webgpu/webgpu-samples/blob/main/src/sample/rotatingCube/main.ts
 import { mat4, vec3 } from "npm:wgpu-matrix";
-import { createWindow, mainloop } from "../mod.ts";
+import { mainloop, WindowGPU } from "../ext/webgpu.ts";
 
 const basicVertWGSL = `
 struct Uniforms {
@@ -41,9 +41,6 @@ fn main(
   return f * texColor + (1.0 - f) * fragPosition;
 }
 `;
-
-const adapter = await navigator.gpu.requestAdapter();
-const device = await adapter!.requestDevice();
 
 const cubeVertexSize = 4 * 10;
 const cubePositionOffset = 0;
@@ -96,18 +93,21 @@ export const cubeVertexArray = new Float32Array([
   -1, 1, -1, 1,  0, 1, 0, 1,  1, 0,
 ]);
 
-const window = createWindow({
-  title: "Deno Window Manager",
-  width: 512,
-  height: 512,
-  resizable: true,
-});
+const adapter = await navigator.gpu.requestAdapter();
+const device = await adapter!.requestDevice();
 
-const { width, height } = window.framebufferSize;
+const window = new WindowGPU(
+  {
+    title: "Deno Window Manager",
+    width: 512,
+    height: 512,
+    resizable: true,
+  },
+  adapter!,
+  device,
+);
 
-const surface = window.windowSurface();
-
-const context = surface.getContext("webgpu");
+const context = window.getContext("webgpu");
 
 const presentationFormat = navigator.gpu.getPreferredCanvasFormat();
 context.configure({
@@ -182,7 +182,10 @@ const pipeline = device.createRenderPipeline({
 });
 
 const depthTexture = device.createTexture({
-  size: [width, height],
+  size: [
+    window.window.framebufferSize.width,
+    window.window.framebufferSize.height,
+  ],
   format: "depth24plus",
   usage: GPUTextureUsage.RENDER_ATTACHMENT,
 });
@@ -194,7 +197,10 @@ const uniformBuffer = device.createBuffer({
 });
 
 const cubeTexture = device.createTexture({
-  size: [width, height],
+  size: [
+    window.window.framebufferSize.width,
+    window.window.framebufferSize.height,
+  ],
   format: presentationFormat,
   usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST,
 });
@@ -242,7 +248,8 @@ const renderPassDescriptor: GPURenderPassDescriptor = {
   },
 };
 
-const aspect = width / height;
+const aspect = window.window.framebufferSize.width /
+  window.window.framebufferSize.height;
 const projectionMatrix = mat4.perspective(
   (2 * Math.PI) / 5,
   aspect,
@@ -298,9 +305,9 @@ mainloop(() => {
     {
       texture: cubeTexture,
     },
-    [width, height],
+    [window.window.framebufferSize.width, window.window.framebufferSize.height],
   );
 
   device.queue.submit([commandEncoder.finish()]);
-  surface.present();
+  window.surface.present();
 }, false);

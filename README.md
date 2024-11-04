@@ -17,7 +17,7 @@ import {
   createWindow,
   getProcAddress,
   mainloop,
-} from "https://deno.land/x/dwm@0.3.4/mod.ts";
+} from "jsr:@gfx/dwm";
 import * as gl from "https://deno.land/x/gluten@0.1.3/api/gles23.2.ts";
 
 const window = createWindow({
@@ -51,7 +51,7 @@ await mainloop(frame);
 import {
   mainloop,
   WindowCanvas,
-} from "https://deno.land/x/dwm@0.3.4/ext/canvas.ts";
+} from "jsr:@gfx/dwm/ext/canvas";
 
 const canvas = new WindowCanvas({
   title: "Skia Canvas",
@@ -80,14 +80,12 @@ See [examples](./examples) for more examples!
 
 For drawing, you can use:
 
+- [WebGPU](https://developer.mozilla.org/en-US/docs/Web/API/WebGPU_API) (Use `ext/webgpu` for an easy to use wrapper)
 - [Deno Gluten](https://github.com/deno-windowing/gluten)
 - [Skia Canvas](https://github.com/DjDeveloperr/skia_canvas) (Use
-  `ext/canvas.ts` for an easy to use wrapper)
+  `ext/canvas` for an easy to use wrapper)
 - [Deno Vulkan](https://github.com/deno-windowing/vulkan)
 
-To package your application you can use:
-
-- [wpack](https://github.com/deno-windowing/wpack)
 
 Since this module depends on unstable FFI API, you need to pass `--unstable`
 along with `--allow-ffi`, `--allow-write` and `--allow-env`.

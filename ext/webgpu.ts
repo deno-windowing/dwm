@@ -1,6 +1,4 @@
 /// <reference types="../types.d.ts" />
-import type { Canvas, CanvasRenderingContext2D } from "jsr:@gfx/canvas@0.5.8";
-import { createCanvas } from "jsr:@gfx/canvas@0.5.8";
 
 import type {
   CreateWindowOptions,
@@ -10,13 +8,26 @@ import type {
   WindowRefreshEvent,
 } from "../mod.ts";
 
+interface DWMGPUCanvasConfiguration {
+  format: GPUTextureFormat;
+  usage?: GPUTextureUsageFlags;
+  viewFormats?: GPUTextureFormat[];
+  colorSpace?: "srgb" | "display-p3";
+  alphaMode?: GPUCanvasAlphaMode;
+}
+
 import { createWindow } from "../mod.ts";
 
-export class WindowCanvas {
+export class WindowGPU {
   /**
-   * Canvas instance
+   * GPU adapter
    */
-  canvas: Canvas;
+  adapter: GPUAdapter;
+
+  /**
+   * GPU device
+   */
+  device: GPUDevice;
 
   /**
    * Window instance
@@ -24,9 +35,14 @@ export class WindowCanvas {
   window: DwmWindow;
 
   /**
-   * Canvas 2D context
+   * Window surface
    */
-  ctx: CanvasRenderingContext2D;
+  surface: Deno.UnsafeWindowSurface;
+
+  /**
+   * WebGPU context
+   */
+  ctx: GPUCanvasContext;
 
   #toDraw = true;
 
@@ -38,17 +54,23 @@ export class WindowCanvas {
   /**
    * Callback when drawing
    */
-  onDraw?: (ctx: CanvasRenderingContext2D) => unknown;
+  onDraw?: (ctx: GPUCanvasContext) => unknown;
 
   #resizeNextFrame?: [number, number];
 
-  constructor(options: CreateWindowOptions = {}) {
+  constructor(
+    options: CreateWindowOptions = {},
+    adapter: GPUAdapter,
+    device: GPUDevice,
+  ) {
     this.window = createWindow(Object.assign({
       glVersion: [3, 3],
     }, options));
     const { width, height } = this.window.framebufferSize;
-    this.canvas = createCanvas(width, height, true);
-    this.ctx = this.canvas.getContext("2d");
+    this.adapter = adapter;
+    this.device = device;
+    this.surface = this.window.windowSurface();
+    this.ctx = this.surface.getContext("webgpu");
 
     const onFramebuffersize = (evt: WindowFramebufferSizeEvent) => {
       if (!evt.match(this.window)) return;
@@ -75,15 +97,13 @@ export class WindowCanvas {
   }
 
   /**
-   * Get 2D context
+   * Get the webgpu context
    */
-  getContext(type: "2d") {
+  getContext(contextId: "webgpu") {
     return this.ctx;
   }
 
   #resize(width: number, height: number) {
-    this.canvas.resize(width, height);
-    this.ctx = this.canvas.getContext("2d");
     this.onContextLoss?.();
     this.#toDraw = true;
   }
@@ -96,16 +116,15 @@ export class WindowCanvas {
   }
 
   /**
-   * Flush the canvas
+   * Flush the context
    */
   flush() {
     if (!this.#toDraw) return;
-    this.canvas.flush();
     this.window.swapBuffers();
   }
 
   /**
-   * Draw the canvas
+   * Draw the context
    */
   async draw() {
     if (!this.#toDraw) return;
@@ -120,7 +139,14 @@ export class WindowCanvas {
   }
 }
 
+export async function createWindowGPU(
+  options: CreateWindowOptions,
+) {
+  const adapter = await navigator.gpu.requestAdapter();
+  if (!adapter) throw new Error("No GPU adapter found");
+  const device = await adapter!.requestDevice();
+  const window = new WindowGPU(options, adapter, device);
+  return window;
+}
+
 export * from "../mod.ts";
-// deno-lint-ignore ban-ts-comment
-// @ts-expect-error
-export * from "jsr:@gfx/canvas@0.5.8";
